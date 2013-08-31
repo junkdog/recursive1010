@@ -67,9 +67,9 @@
 				"productions": [ "X=F-[[X]+X]+F[+FX]-X", "F=FF" ],
 				"iteration": 8
 			},
-			"MaxTextureDimension": { "value": 512 },
+			"MaxTextureDimension": { "value": 256 },
 			"Position": {
-				"pos": { "x": 0, "y": 0 }
+				"pos": { "x": 256, "y": 0 }
 			},
 			"Size": {},
 			"TurtleProcessor": {

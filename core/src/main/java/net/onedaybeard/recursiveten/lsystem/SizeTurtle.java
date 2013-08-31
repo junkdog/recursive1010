@@ -33,6 +33,13 @@ public class SizeTurtle extends BaseTurtle
 		free(length);
 	}
 	
+	@Override
+	public void reset()
+	{
+		super.reset();
+		minX = minY = maxX = maxY = 0;
+	}
+	
 	public Rectangle getSize()
 	{
 		return new Rectangle(minX, minY, (maxX - minX), (maxY - minY));

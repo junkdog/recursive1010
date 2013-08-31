@@ -14,6 +14,7 @@ import net.onedaybeard.keyflection.annotation.Shortcut;
 import net.onedaybeard.keyflection.sort.ShortcutComparator;
 import net.onedaybeard.recursiveten.component.AnchorPoint;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
+import net.onedaybeard.recursiveten.component.MaxTextureDimension;
 import net.onedaybeard.recursiveten.component.Size;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
 import net.onedaybeard.recursiveten.component.TurtleProcessor.CommandBinding;
@@ -30,7 +31,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Rectangle;
 
 @ArtemisManager(
-	requires={DeterministicLSystem.class, Size.class, TurtleProcessor.class},
+	requires={DeterministicLSystem.class, MaxTextureDimension.class, Size.class, TurtleProcessor.class},
 	optional=AnchorPoint.class,
 	systems=EventSystem.class)
 public class LSystemResolverManager extends Manager
@@ -73,17 +74,31 @@ public class LSystemResolverManager extends Manager
 		char[] commands = ls.result.toCharArray();
 		
 		TurtleProcessor processor = turtleProcessorMapper.get(e);
-		turtle.reset();
-		for (int i = 0; commands.length > i; i++)
-		{
-			execute(parseCommand(commands[i], processor.commands), processor);
-		}
+		calculateSize(commands, processor, maxTextureDimensionMapper.get(e).value);
 		Rectangle turtleSize = turtle.getSize();
 		Size size = sizeMapper.get(e);
 		size.width = turtleSize.width;
 		size.height = turtleSize.height;
 
 		ls.requestUpdate = false;
+	}
+
+	private void calculateSize(char[] commands, TurtleProcessor processor, float max)
+	{
+		turtle.reset();
+		for (int i = 0; commands.length > i; i++)
+		{
+			execute(parseCommand(commands[i], processor.commands), processor);
+		}
+		Rectangle turtleSize = turtle.getSize();
+		System.out.println(turtleSize);
+		
+		float dim = Math.max(turtleSize.width, turtleSize.height);
+		if (max > dim && (dim / max) > 0.95f)
+			return;
+		
+		processor.moveAmount /= 1 / (max / dim);
+		calculateSize(commands, processor, max);
 	}
 	
 	@Override
