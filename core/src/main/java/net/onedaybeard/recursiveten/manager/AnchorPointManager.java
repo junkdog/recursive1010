@@ -63,7 +63,7 @@ public final class AnchorPointManager extends Manager
 
 	private static void updateAnchorPoint(AnchorPoint AnchorPoint, Size size)
 	{
-		Vector2 anchorPoint = AnchorPoint.calculated;
+		Vector2 anchorPoint = AnchorPoint.point;
 		anchorPoint.set(size.width * anchorPoint.x, size.height * anchorPoint.y);
 	}
 }

@@ -9,8 +9,8 @@ public class Recursive1010Desktop
 	{
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.useGL20 = true;
-		config.width = 900;
-		config.height = 600;
+		config.width = 1200;
+		config.height = 800;
 		new LwjglApplication(new Recursive1010(), config);
 	}
 }

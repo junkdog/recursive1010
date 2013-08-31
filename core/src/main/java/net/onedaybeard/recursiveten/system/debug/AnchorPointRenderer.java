@@ -11,6 +11,7 @@ import net.onedaybeard.recursiveten.profile.Profiler;
 import com.artemis.Entity;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -18,14 +19,14 @@ import com.badlogic.gdx.math.Vector2;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
-	requires={Position.class, Size.class, AnchorPoint.class, Scale.class},
+	requires={Position.class},
 	managers=TagManager.class)
-public final class EntityOutlineRenderer extends EntityProcessingSystem
+public final class AnchorPointRenderer extends EntityProcessingSystem
 {
 	private final ShapeRenderer debugRender;
 	private final OrthographicCamera camera;
 
-	public EntityOutlineRenderer(OrthographicCamera camera)
+	public AnchorPointRenderer(OrthographicCamera camera)
 	{
 		super(null);
 		debugRender = new ShapeRenderer();
@@ -38,21 +39,18 @@ public final class EntityOutlineRenderer extends EntityProcessingSystem
 		debugRender.setProjectionMatrix(camera.combined);
 		
 		debugRender.begin(ShapeType.Line);
-		debugRender.setColor(0, 1, 1, 1);
+		debugRender.setColor(Color.CYAN);
 	}
 
 	@Override
 	protected void process(Entity e)
 	{
-		renderBoundingRectangle(positionMapper.get(e).pos, sizeMapper.get(e));
+		renderBoundingRectangle(positionMapper.get(e).pos, 20);
 	}
 
-	private void renderBoundingRectangle(Vector2 position, Size size)
+	private void renderBoundingRectangle(Vector2 position, float radius)
 	{
-		debugRender.rect(
-			position.x - (size.width / 2),
-			position.y - (size.height / 2),
-			size.width, size.height);
+		debugRender.circle(position.x, position.y, radius, 4);
 	}
 	
 	@Override
@@ -69,7 +67,7 @@ public final class EntityOutlineRenderer extends EntityProcessingSystem
 		if (entity == null)
 			return;
 		
-		debugRender.setColor(0, 1, 0, 1);
-		renderBoundingRectangle(positionMapper.get(entity).pos, sizeMapper.get(entity));
+		debugRender.setColor(Color.CYAN);
+		renderBoundingRectangle(positionMapper.get(entity).pos, 20);
 	}
 }

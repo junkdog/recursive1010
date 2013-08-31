@@ -23,6 +23,7 @@ import net.onedaybeard.recursiveten.lsystem.LSystem;
 import net.onedaybeard.recursiveten.lsystem.LSystemUtil;
 import net.onedaybeard.recursiveten.lsystem.SizeTurtle;
 import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
+import net.onedaybeard.recursiveten.lsystem.TurtleInterpreter;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 
 import com.artemis.Entity;
@@ -31,21 +32,23 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Rectangle;
 
 @ArtemisManager(
-	requires={DeterministicLSystem.class, MaxTextureDimension.class, Size.class, TurtleProcessor.class},
-	optional=AnchorPoint.class,
+	requires={AnchorPoint.class, DeterministicLSystem.class, MaxTextureDimension.class, Size.class, TurtleProcessor.class},
 	systems=EventSystem.class)
 public class LSystemResolverManager extends Manager
 {
 	private SizeTurtle turtle;
+	private TurtleInterpreter interpreter;
 	
 	private Set<Entity> entities = new HashSet<Entity>();
 
 	private KeyflectionInputProcessor keyflectionInputProcessor;
 
+
 	@Override
 	protected void initialize() 
 	{
 		turtle = new SizeTurtle();
+		interpreter = new TurtleInterpreter(turtle);
 	}
 
 	@Override
@@ -79,6 +82,12 @@ public class LSystemResolverManager extends Manager
 		Size size = sizeMapper.get(e);
 		size.width = turtleSize.width;
 		size.height = turtleSize.height;
+		
+		AnchorPoint anchor = anchorPointMapper.get(e);
+		anchor.calculated.x = turtleSize.width * anchor.point.x;
+		anchor.calculated.y = turtleSize.height * anchor.point.y;
+		anchor.offset.x = turtleSize.x;
+		anchor.offset.y = turtleSize.y;
 
 		ls.requestUpdate = false;
 	}
@@ -88,7 +97,7 @@ public class LSystemResolverManager extends Manager
 		turtle.reset();
 		for (int i = 0; commands.length > i; i++)
 		{
-			execute(parseCommand(commands[i], processor.commands), processor);
+			interpreter.execute(parseCommand(commands[i], processor.commands), processor);
 		}
 		Rectangle turtleSize = turtle.getSize();
 		System.out.println(turtleSize);
@@ -105,57 +114,6 @@ public class LSystemResolverManager extends Manager
 	public void deleted(Entity e)
 	{
 		entities.remove(e);
-	}
-
-	private void execute(TurtleCommand command, TurtleProcessor processor)
-	{
-		Random random = new Random(420);
-		float randomizer = (processor.turnDeviation != 0)
-			? (random.nextFloat() * (processor.turnDeviation)) - processor.turnDeviation
-			: 0;
-		
-		switch(command)
-		{
-			case DRAW_FORWARD:
-				turtle.drawForward(processor.moveAmount);
-				break;
-			case MOVE_FORWARD:
-				turtle.moveForward(processor.moveAmount);
-				break;
-			case NO_OPERATION:
-				break;
-			case POP:
-				turtle.pop();
-				break;
-			case POP_AND_TURN_LEFT:
-				turtle.pop();
-				turtle.rotate(-processor.turnAmount + randomizer);
-				break;
-			case POP_AND_TURN_RIGHT:
-				turtle.pop();
-				turtle.rotate(processor.turnAmount + randomizer);
-				break;
-			case PUSH:
-				turtle.push();
-				break;
-			case PUSH_AND_TURN_LEFT:
-				turtle.push();
-				turtle.rotate(-processor.turnAmount + randomizer);
-				break;
-			case PUSH_AND_TURN_RIGHT:
-				turtle.push();
-				turtle.rotate(processor.turnAmount + randomizer);
-				break;
-			case TURN_LEFT:
-				turtle.rotate(-processor.turnAmount + randomizer);
-				break;
-			case TURN_RIGHT:
-				turtle.rotate(processor.turnAmount + randomizer);
-				break;
-			default:
-				throw new RuntimeException("Missing command: " + command);
-			
-		}
 	}
 
 	private static TurtleCommand parseCommand(char data, CommandBinding[] bindings)

@@ -61,13 +61,14 @@
 	},
 	LS_BUSH:{
 		"components": {
+			"AnchorPoint": {},
 			"Cullable": {},
 			"DeterministicLSystem": {
 				"axiom": "X",
 				"productions": [ "X=F-[[X]+X]+F[+FX]-X", "F=FF" ],
 				"iteration": 8
 			},
-			"MaxTextureDimension": { "value": 256 },
+			"MaxTextureDimension": { "value": 512 },
 			"Position": {
 				"pos": { "x": 256, "y": 0 }
 			},

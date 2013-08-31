@@ -19,17 +19,19 @@ import com.badlogic.gdx.math.Vector2;
 @ToString @EqualsAndHashCode(callSuper = false)
 public final class AnchorPoint extends Component
 {
-	public Vector2 offset;
+	public Vector2 point;
 	public final transient Vector2 calculated;
+	public final transient Vector2 offset;
 	
 	public AnchorPoint()
 	{
-		this(0, 0);
+		this(0.5f, 0.5f);
 	}
 	
 	public AnchorPoint(float x, float y)
 	{
-		offset = new Vector2(x, y);
+		point = new Vector2(x, y);
 		calculated = new Vector2();
+		offset = new Vector2();
 	}
 }
