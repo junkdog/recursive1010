@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.onedaybeard.recursiveten</groupId>
+		<artifactId>recursive-1010</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>recursive-1010-core</artifactId>
+	<packaging>jar</packaging>
+	<name>Recursive1010 Core</name>
+
+
+	<properties>
+		<gdx.version>0.9.9-SNAPSHOT</gdx.version>
+		<agrotera.version>0.2.2-SNAPSHOT</agrotera.version>
+		<artemis.odb.version>0.3.4</artemis.odb.version>
+		<lombok-pg.version>0.11.3</lombok-pg.version>
+		<keyflection.version>0.1.0-SNAPSHOT</keyflection.version>
+		<dominatrix.version>0.2.0-SNAPSHOT</dominatrix.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx</artifactId>
+			<version>${gdx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.peichhorn</groupId>
+			<artifactId>lombok-pg</artifactId>
+			<version>${lombok-pg.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.peichhorn</groupId>
+			<artifactId>lombok-pg</artifactId>
+			<version>${lombok-pg.version}</version>
+			<classifier>runtime</classifier>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard.agrotera</groupId>
+			<artifactId>agrotera-api</artifactId>
+			<version>${agrotera.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard.agrotera</groupId>
+			<artifactId>agrotera-lombok</artifactId>
+			<version>${agrotera.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard.artemis</groupId>
+			<artifactId>artemis-odb</artifactId>
+			<version>${artemis.odb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard</groupId>
+			<artifactId>dominatrix-odb</artifactId>
+			<version>${dominatrix.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard</groupId>
+			<artifactId>dominatrix-gdx-odb</artifactId>
+			<version>${dominatrix.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.onedaybeard</groupId>
+			<artifactId>keyflection-gdx</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>net.onedaybeard.agrotera</groupId>
+				<artifactId>agrotera-maven-plugin</artifactId>
+				<version>${agrotera.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>agrotera</goal>
+							<goal>matrix</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

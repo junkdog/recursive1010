@@ -1,0 +1,92 @@
+{
+	BACKGROUND:{
+		"components": {
+			"BackgroundColor": {
+				"value": { "a": 1, "r": 1, "g": 1, "b": 1 }
+			}
+		}
+	},
+	LS_TREE:{
+		"components": {
+			"Cullable": {},
+			"DeterministicLSystem": {
+				"axiom": "0",
+				"productions": [ "0=1[0]0", "1=11" ],
+				"iteration": 10
+			},
+			"Position": {
+				"pos": { "x": 1, "y": 1 }
+			},
+			"Size": {},
+			"TurtleProcessor": {
+				"moveAmount": 2,
+				"turnAmount": 75,	
+				"commands": [
+					{ "key": "0", "command": "DRAW_FORWARD" },
+					{ "key": "1", "command": "DRAW_FORWARD" },
+					{ "key": "[", "command": "PUSH_AND_TURN_LEFT" },
+					{ "key": "]", "command": "POP_AND_TURN_RIGHT" }
+				]
+			},
+			"Velocity": {
+				"vector": { "x": 20, "y": 1 }
+			}
+		}
+	},
+	LS_DRAGON:{
+		"components": {
+			"Cullable": {},
+			"DeterministicLSystem": {
+				"axiom": "FX",
+				"productions": [ "X=X+YF", "Y=FX-Y" ],
+				"iteration": 16
+			},
+			"Position": {
+				"pos": { "x": 0, "y": 0 }
+			},
+			"Size": {},
+			"TurtleProcessor": {
+				"moveAmount": 3,
+				"turnAmount": 90,	
+				"commands": [
+					{ "key": "F", "command": "DRAW_FORWARD" },
+					{ "key": "-", "command": "TURN_LEFT" },
+					{ "key": "+", "command": "TURN_RIGHT" }
+				]
+			},
+			"Velocity": {
+				"vector": { "x": 2, "y": 1 }
+			}
+		}
+	},
+	LS_BUSH:{
+		"components": {
+			"Cullable": {},
+			"DeterministicLSystem": {
+				"axiom": "X",
+				"productions": [ "X=F-[[X]+X]+F[+FX]-X", "F=FF" ],
+				"iteration": 8
+			},
+			"MaxTextureDimension": { "value": 512 },
+			"Position": {
+				"pos": { "x": 0, "y": 0 }
+			},
+			"Size": {},
+			"TurtleProcessor": {
+				"moveAmount": 5,
+				"turnAmount": 30,
+				"turnDeviation": 3,
+				"commands": [
+					{ "key": "F", "command": "DRAW_FORWARD" },
+					{ "key": "-", "command": "TURN_LEFT" },
+					{ "key": "+", "command": "TURN_RIGHT" },
+					{ "key": "[", "command": "PUSH" },
+					{ "key": "]", "command": "POP" }
+				]
+			},
+			"Velocity": {
+				"vector": { "x": 2, "y": 1 }
+			}
+		}
+	}
+}
