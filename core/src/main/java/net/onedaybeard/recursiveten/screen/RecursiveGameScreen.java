@@ -101,7 +101,7 @@ public class RecursiveGameScreen implements Screen
 //		entityFactory.create("LS_DRAGON");
 //		entityFactory.create("LS_TREE");
 		Entity e = entityFactory.create("LS_BUSH");
-		world.getManager(GroupManager.class).add(e, "level");
+//		world.getManager(GroupManager.class).add(e, "level");
 
 		DeterministicLSystem lSystem = new DeterministicLSystem();
 		lSystem.axiom = "0";
@@ -143,6 +143,7 @@ public class RecursiveGameScreen implements Screen
 		inputMultiplexer.addProcessor(world.getManager(LSystemResolverManager.class).getInputProcessor());
 		inputMultiplexer.addProcessor(world.getSystem(InputHandlerSystem.class));
 		inputMultiplexer.addProcessor(new EntityHandler(new EntityController(camera, world), null));
+		inputMultiplexer.addProcessor(world.getSystem(UiDebugSystem.class).getMultiplexer());
 		Gdx.input.setInputProcessor(inputMultiplexer);
 	}
 

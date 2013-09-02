@@ -76,8 +76,10 @@ public class EntityHandler implements InputProcessor
 //		else
 //			return false;
 		
-		Director.instance.send(CommandEvent.Type.ENTITY_SELECTED, e.getId());
-		return true;
+		if (e != null)
+			Director.instance.send(CommandEvent.Type.ENTITY_SELECTED, e.getId());
+		
+		return e != null;
 	}
 
 	@Override
