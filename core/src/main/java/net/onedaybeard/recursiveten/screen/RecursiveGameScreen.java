@@ -5,8 +5,6 @@ import net.onedaybeard.dominatrix.artemis.JsonEntitySerializer;
 import net.onedaybeard.keyflection.CommandManager;
 import net.onedaybeard.recursiveten.Assets;
 import net.onedaybeard.recursiveten.Director;
-import net.onedaybeard.recursiveten.camera.CameraController;
-import net.onedaybeard.recursiveten.camera.InputHandler;
 import net.onedaybeard.recursiveten.component.Cullable;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
 import net.onedaybeard.recursiveten.component.JsonKey;
@@ -18,13 +16,18 @@ import net.onedaybeard.recursiveten.input.EntityController;
 import net.onedaybeard.recursiveten.input.EntityHandler;
 import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.manager.AnchorPointManager;
+import net.onedaybeard.recursiveten.manager.EntityTracker;
 import net.onedaybeard.recursiveten.manager.LSystemResolverManager;
 import net.onedaybeard.recursiveten.manager.LSystemSpriteManager;
 import net.onedaybeard.recursiveten.system.debug.AnchorPointRenderer;
 import net.onedaybeard.recursiveten.system.debug.CameraInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.EntityOutlineRenderer;
+import net.onedaybeard.recursiveten.system.debug.InputHoverSystem;
 import net.onedaybeard.recursiveten.system.debug.MouseInfoSystem;
+import net.onedaybeard.recursiveten.system.debug.UiDebugSystem;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
+import net.onedaybeard.recursiveten.system.input.CameraController;
+import net.onedaybeard.recursiveten.system.input.InputHandlerSystem;
 import net.onedaybeard.recursiveten.system.render.BackgroundRenderSystem;
 import net.onedaybeard.recursiveten.system.render.SpriteRenderSystem;
 import net.onedaybeard.recursiveten.system.spatial.PositionUpdateSystem;
@@ -52,9 +55,6 @@ public class RecursiveGameScreen implements Screen
 
 	private final Stage ui;
 
-	private InputHandler inputHandler;
-	private CameraController cameraController;
-
 	private float maxAxisValue = 1500;
 
 	private final World world;
@@ -72,8 +72,7 @@ public class RecursiveGameScreen implements Screen
 
 		initializeEntities(world);
 
-		inputHandler = initInputProcessing(ui, camera, world);
-		cameraController = inputHandler.getCameraController();
+		initInputProcessing(ui, camera, world);
 	}
 
 	private static OrthographicCamera createCamera()
@@ -101,7 +100,8 @@ public class RecursiveGameScreen implements Screen
 		entityFactory.create("BACKGROUND");
 //		entityFactory.create("LS_DRAGON");
 //		entityFactory.create("LS_TREE");
-		entityFactory.create("LS_BUSH");
+		Entity e = entityFactory.create("LS_BUSH");
+		world.getManager(GroupManager.class).add(e, "level");
 
 		DeterministicLSystem lSystem = new DeterministicLSystem();
 		lSystem.axiom = "0";
@@ -110,7 +110,7 @@ public class RecursiveGameScreen implements Screen
 		lSystem.iteration = 5;
 		lSystem.requestUpdate = false;
 
-		Entity e = world.createEntity()
+		Entity e2 = world.createEntity()
 			.addComponent(new Position(1, 1))
 			.addComponent(new Cullable())
 			.addComponent(new Size())
@@ -130,20 +130,20 @@ public class RecursiveGameScreen implements Screen
 
 	}
 
-	private static InputHandler initInputProcessing(Stage ui, OrthographicCamera camera, World world)
+	private static void initInputProcessing(Stage ui, OrthographicCamera camera, World world)
 	{
 		CommandManager.instance.setSingleModifierKeys(true);
 		
-		InputHandler inputHandler = new InputHandler(new CameraController(camera));
+//		InputHandler inputHandler = new InputHandler(new CameraController(camera));
 
 		InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(ui);
-		inputMultiplexer.addProcessor(inputHandler);
+//		inputMultiplexer.addProcessor(inputHandler);
+//		inputMultiplexer.addProcessor(world.getSystem(InputHoverSystem.class).getInputProcessor());
 		inputMultiplexer.addProcessor(world.getManager(LSystemResolverManager.class).getInputProcessor());
+		inputMultiplexer.addProcessor(world.getSystem(InputHandlerSystem.class));
 		inputMultiplexer.addProcessor(new EntityHandler(new EntityController(camera, world), null));
 		Gdx.input.setInputProcessor(inputMultiplexer);
-
-		return inputHandler;
 	}
 
 	private static World initializeArtemis(OrthographicCamera camera, Stage ui, Rectangle worldBoundaries)
@@ -156,11 +156,13 @@ public class RecursiveGameScreen implements Screen
 		world.setManager(new LSystemResolverManager());
 		world.setManager(new AnchorPointManager());
 		world.setManager(new LSystemSpriteManager());
+		world.setManager(new EntityTracker());
 
 		entityFactory = EntityFactoryManager.from(Assets.getFileHandle("data/game-objects.json"), JsonKey.class);
 		world.setManager(entityFactory);
 
 		Director.instance.setEventSystem(world.setSystem(new EventSystem()));
+		world.setSystem(new InputHandlerSystem(new CameraController(camera)));
 		world.setSystem(new PositionUpdateSystem());
 //		world.setSystem(new CullingSystem(camera));
 		world.setSystem(new SpritePositionUpdateSystem());
@@ -171,6 +173,8 @@ public class RecursiveGameScreen implements Screen
 		world.setSystem(new AnchorPointRenderer(camera));
 		world.setSystem(new CameraInfoSystem(camera, spriteBatch));
 		world.setSystem(new MouseInfoSystem(camera, spriteBatch));
+		world.setSystem(new InputHoverSystem(camera));
+		world.setSystem(new UiDebugSystem());
 
 		world.initialize();
 
@@ -190,8 +194,6 @@ public class RecursiveGameScreen implements Screen
 			delta = 0;
 
 		if (delta < MIN_DELTA) delta = MIN_DELTA;
-
-		cameraController.update(delta);
 
 		entityFactory.addNewToWorld();
 

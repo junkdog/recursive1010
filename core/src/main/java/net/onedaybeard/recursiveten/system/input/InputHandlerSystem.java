@@ -1,16 +1,24 @@
-package net.onedaybeard.recursiveten.camera;
+package net.onedaybeard.recursiveten.system.input;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.ArtemisSystem;
 import lombok.Getter;
+import lombok.Profile;
+import net.onedaybeard.recursiveten.manager.EntityTracker;
+import net.onedaybeard.recursiveten.profile.Profiler;
 
+import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 
-public final class InputHandler implements InputProcessor
+@Profile(using=Profiler.class, enabled=Profiler.ENABLED)
+@ArtemisSystem(
+	managers=EntityTracker.class)
+public final class InputHandlerSystem extends VoidEntitySystem implements InputProcessor
 {
 	private final Vector2 lastPosition;
 	@Getter private final CameraController cameraController;
@@ -25,7 +33,7 @@ public final class InputHandler implements InputProcessor
 	private Vector2 fingerTwo = new Vector2();
 	private boolean isPinchZooming = false;
 	
-	public InputHandler(CameraController cameraController)
+	public InputHandlerSystem(CameraController cameraController)
 	{
 		this.lastPosition = new Vector2();
 		this.cameraController = cameraController;
@@ -168,5 +176,12 @@ public final class InputHandler implements InputProcessor
 	public boolean mouseMoved(int screenX, int screenY)
 	{
 		return false;
+	}
+
+	@Override
+	protected void processSystem()
+	{
+		cameraController.update(world.getDelta());
+		
 	}
 }

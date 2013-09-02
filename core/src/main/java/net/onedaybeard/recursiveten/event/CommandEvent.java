@@ -18,7 +18,7 @@ public final class CommandEvent extends Event
 	}
 
 	private Type type;
-	private float value;
+	private int value;
 	
 	@Override
 	public void reset()
@@ -30,16 +30,21 @@ public final class CommandEvent extends Event
 	
 	public void setValue(float value)
 	{
-		this.value = value;
+		this.value = Float.floatToIntBits(value);
 	}
 	
 	public void setValue(int value)
 	{
-		this.value = Float.intBitsToFloat(value);
+		this.value = value;
 	}
 	
-	public int getIntvalue()
+	public int getIntValue()
 	{
-		return Float.floatToIntBits(value);
+		return value;
+	}
+	
+	public float getFloatValue()
+	{
+		return Float.intBitsToFloat(value);
 	}
 }

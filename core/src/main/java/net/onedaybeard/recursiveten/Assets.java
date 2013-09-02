@@ -10,6 +10,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public final class Assets
 {
@@ -30,7 +31,7 @@ public final class Assets
 		
 		Assets.assetManager = new AssetManager(fileResolver);
 //		assetManager.load("uiskin.json", Skin.class);
-//		assetManager.load("res/ui/uiskin.json", Skin.class);
+		assetManager.load("gfx/ui/uiskin.json", Skin.class);
 //		for (Resource res : TextureMap.Resource.values())
 //			assetManager.load(res.getRes(), Texture.class);
 //		TextureMap.loadAssetManager(assetManager);

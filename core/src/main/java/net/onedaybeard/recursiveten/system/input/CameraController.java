@@ -1,4 +1,4 @@
-package net.onedaybeard.recursiveten.camera;
+package net.onedaybeard.recursiveten.system.input;
 
 import java.util.EnumSet;
 

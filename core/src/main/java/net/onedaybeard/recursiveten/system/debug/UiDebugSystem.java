@@ -13,7 +13,6 @@ import net.onedaybeard.dominatrix.experimental.ui.EntityInspectorHud;
 import net.onedaybeard.dominatrix.experimental.ui.EntityInspectorHud.JsonKeyResolver;
 import net.onedaybeard.dominatrix.experimental.ui.NotificationHud;
 import net.onedaybeard.dominatrix.experimental.ui.SystemsHud;
-import net.onedaybeard.dominatrix.util.SystemNTimer;
 import net.onedaybeard.keyflection.CommandController;
 import net.onedaybeard.keyflection.KeyflectionInputProcessor;
 import net.onedaybeard.keyflection.annotation.Command;
@@ -26,6 +25,7 @@ import net.onedaybeard.recursiveten.event.CommandEvent;
 import net.onedaybeard.recursiveten.event.CommandEvent.Type;
 import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
+import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
 
 import com.artemis.Component;
 import com.artemis.Entity;
@@ -109,10 +109,11 @@ public final class UiDebugSystem extends VoidEntitySystem
 				switch (type)
 				{
 					case ENTITY_SELECTED:
-						setEntity(world.getEntity(event.getIntvalue()));
+						setEntity(world.getEntity(event.getIntValue()));
 						break;
 					case ENTITY_HOVERED:
-						inspectorHud.setEntity(world.getEntity(event.getIntvalue()));
+						if (event.getIntValue() != -1)
+							inspectorHud.setEntity(world.getEntity(event.getIntValue()));
 						break;
 					case NO_HOVERED_ENTITY:
 						inspectorHud.setEntity(null);
@@ -134,24 +135,12 @@ public final class UiDebugSystem extends VoidEntitySystem
 	}
 
 	@Override
-	protected void begin()
-	{
-		timer.start();
-	}
-
-	@Override
 	protected void processSystem()
 	{
 		stage.act();
 		stage.draw();
 	}
 
-	@Override
-	protected void end()
-	{
-		timer.stopAndPrintLog();
-	}
-	
 	protected class Shortcuts implements CommandController
 	{
 		@Command(name="quit/close component window", bindings=@Shortcut(Keys.ESCAPE))

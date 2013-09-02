@@ -34,12 +34,11 @@ public class InputHoverSystem extends TimerIntervalEntityProcessingSystem
 	
 	@Getter private final InputProcessor inputProcessor;
 
-	@SuppressWarnings("unchecked")
-	public InputHoverSystem(OrthographicCamera camera1, OrthographicCamera camera2)
+	public InputHoverSystem(OrthographicCamera camera)
 	{
 		super(null, .1f);
 
-		coordinates = new UnitCoordinates(camera1);
+		coordinates = new UnitCoordinates(camera);
 		inputProcessor = new MouseClickListener();
 	}
 

@@ -4,6 +4,7 @@ import net.onedaybeard.dominatrix.artemis.EntityFactoryManager;
 import net.onedaybeard.recursiveten.component.JsonKey;
 import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.component.Renderable;
+import net.onedaybeard.recursiveten.manager.EntityTracker;
 import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.ComponentMapper;
@@ -21,10 +22,12 @@ public class EntityController
 	
 	private final World world;
 	private final EntityFactoryManager entityFactory;
-	private final GroupManager groupManager;
+//	private final GroupManager groupManager;
 
 	private final ComponentMapper<Renderable> renderableMapper;
 	private final ComponentMapper<Position> positionMapper;
+
+	private EntityTracker entityTracker;
 
 	public EntityController(OrthographicCamera camera, World world)
 	{
@@ -32,31 +35,33 @@ public class EntityController
 		unitCoordinates = new UnitCoordinates(camera);
 
 		entityFactory = world.getManager(EntityFactoryManager.class);
-		groupManager = world.getManager(GroupManager.class);
+//		groupManager = world.getManager(GroupManager.class);
+		entityTracker = world.getManager(EntityTracker.class);
 		
 		renderableMapper = world.getMapper(Renderable.class);
 		positionMapper = world.getMapper(Position.class);
 	}
 	
-	Entity addEntity(String entityKey, float x, float y)
-	{
-		unitCoordinates.screenCoordinateAtPixel(x, y);
-		
-		Position position = new Position(unitCoordinates.coordinateAtPixel(x, y));
-		Entity e = entityFactory.create(entityKey);
-		e.addComponent(position);
-		e.addComponent(new JsonKey(entityKey));
-		
-		groupManager.add(e, "level");
-		
-		return e;
-	}
+//	Entity addEntity(String entityKey, float x, float y)
+//	{
+//		unitCoordinates.screenCoordinateAtPixel(x, y);
+//		
+//		Position position = new Position(unitCoordinates.coordinateAtPixel(x, y));
+//		Entity e = entityFactory.create(entityKey);
+//		e.addComponent(position);
+//		e.addComponent(new JsonKey(entityKey));
+//		
+////		groupManager.add(e, "level");
+//		
+//		return e;
+//	}
 	
 	Entity getEntityAt(float x, float y)
 	{
-		ImmutableBag<Entity> entities = groupManager.getEntities("level");
+//		ImmutableBag<Entity> entities = groupManager.getEntities("level");
 		Vector2 coordinates = unitCoordinates.coordinateAtPixel(x, y);
-		return searchEntity(coordinates, entities);
+//		return searchEntity(coordinates, entities);
+		return entityTracker.searchEntity(coordinates);
 	}
 	
 	void moveEntity(int entityId, int moveX, int moveY)
@@ -68,21 +73,21 @@ public class EntityController
 		position.pos.add(displacement);
 	}
 	
-	private Entity searchEntity(Vector2 coord, ImmutableBag<Entity> entities)
-	{
-		Entity nearest = null;
-		for (int i = 0, s = entities.size(); s > i; i++)
-		{
-			Entity e = entities.get(i);
-			if (!renderableMapper.has(e))
-				continue;
-			
-			if (isHovered(coord, e) && distance(coord, e) < distance(coord, nearest))
-				nearest = e;
-		}
-		
-		return nearest;
-	}
+//	private Entity searchEntity(Vector2 coord, ImmutableBag<Entity> entities)
+//	{
+//		Entity nearest = null;
+//		for (int i = 0, s = entities.size(); s > i; i++)
+//		{
+//			Entity e = entities.get(i);
+//			if (!renderableMapper.has(e))
+//				continue;
+//			
+//			if (isHovered(coord, e) && distance(coord, e) < distance(coord, nearest))
+//				nearest = e;
+//		}
+//		
+//		return nearest;
+//	}
 	
 	private boolean isHovered(Vector2 coord, Entity e)
 	{

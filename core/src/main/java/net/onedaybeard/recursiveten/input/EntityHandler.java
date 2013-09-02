@@ -71,10 +71,10 @@ public class EntityHandler implements InputProcessor
 			movingEntityId = e.getId();
 			Gdx.input.setCursorCatched(true);
 		}
-		else if (currentArchetype != null)
-			e = controller.addEntity(currentArchetype, screenX, screenY);
-		else
-			return false;
+//		else if (currentArchetype != null)
+//			e = controller.addEntity(currentArchetype, screenX, screenY);
+//		else
+//			return false;
 		
 		Director.instance.send(CommandEvent.Type.ENTITY_SELECTED, e.getId());
 		return true;
