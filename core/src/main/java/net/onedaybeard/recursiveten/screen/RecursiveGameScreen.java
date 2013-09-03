@@ -172,7 +172,7 @@ public class RecursiveGameScreen implements Screen
 		world.setSystem(new CameraInfoSystem(camera, spriteBatch));
 		world.setSystem(new MouseInfoSystem(camera, spriteBatch));
 		world.setSystem(new InputHoverSystem(camera));
-		world.setSystem(new UiDebugSystem());
+		world.setSystem(new UiDebugSystem(camera));
 
 		world.initialize();
 

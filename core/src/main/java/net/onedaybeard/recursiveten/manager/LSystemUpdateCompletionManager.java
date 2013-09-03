@@ -27,6 +27,8 @@ public class LSystemUpdateCompletionManager extends Manager
 
 	private void process(Entity e)
 	{
-		deterministicLSystemMapper.get(e).requestUpdate = false;
+		DeterministicLSystem ls = deterministicLSystemMapper.get(e);
+		ls.requestUpdate = ls.result == null || false;
+		if (ls.requestUpdate) e.changedInWorld();
 	}
 }

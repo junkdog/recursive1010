@@ -7,6 +7,9 @@ import java.util.Comparator;
 import lombok.ArtemisSystem;
 import lombok.Getter;
 import lombok.Profile;
+import net.onedaybeard.dominatrix.artemis.EntityFactoryManager;
+import net.onedaybeard.dominatrix.artemis.JsonComponentFactory;
+import net.onedaybeard.dominatrix.artemis.JsonComponentFactory.FactoryInstance;
 import net.onedaybeard.dominatrix.experimental.ui.ComponentReflexHud;
 import net.onedaybeard.dominatrix.experimental.ui.ComponentsHud;
 import net.onedaybeard.dominatrix.experimental.ui.ComponentsHud.OnEntityChangedListener;
@@ -23,24 +26,30 @@ import net.onedaybeard.keyflection.sort.ShortcutComparator;
 import net.onedaybeard.recursiveten.Assets;
 import net.onedaybeard.recursiveten.Director;
 import net.onedaybeard.recursiveten.component.JsonKey;
+import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.event.CommandEvent;
 import net.onedaybeard.recursiveten.event.CommandEvent.Type;
 import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
+import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.Component;
 import com.artemis.Entity;
+import com.artemis.managers.GroupManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
+	managers=EntityFactoryManager.class,
 	systems=EventSystem.class)
 public final class UiDebugSystem extends VoidEntitySystem
 {
@@ -54,10 +63,12 @@ public final class UiDebugSystem extends VoidEntitySystem
 	private SystemsHud systemsHud;
 
 	@Getter private InputMultiplexer multiplexer;
+	private OrthographicCamera camera;
 	
-	public UiDebugSystem()
+	public UiDebugSystem(OrthographicCamera camera)
 	{
 		super();
+		this.camera = camera;
 	}
 
 	@Override
@@ -114,7 +125,10 @@ public final class UiDebugSystem extends VoidEntitySystem
 				switch (type)
 				{
 					case ENTITY_SELECTED:
-						setEntity(world.getEntity(event.getIntValue()));
+						if (event.getIntValue() != -1)
+							setEntity(world.getEntity(event.getIntValue()));
+						else
+							setEntity(null);
 						break;
 					case ENTITY_HOVERED:
 						if (event.getIntValue() != -1)
@@ -215,6 +229,51 @@ public final class UiDebugSystem extends VoidEntitySystem
 			else
 			{
 				notificationHud.setText("No entity to copy to clipboard.");
+			}
+		}
+		
+		@Command(name="paste entity at cursor", bindings={
+			@Shortcut({Keys.CONTROL_LEFT, Keys.V})})
+		public void pasteEntity()
+		{
+			try
+			{
+				FactoryInstance factoryInstance = JsonComponentFactory.from(
+					"{\n" + Gdx.app.getClipboard().getContents() + "\n}",
+					JsonKey.class.getPackage().getName());
+				
+				String type = factoryInstance.getEntityTypes().first();
+				Array<Component> components = factoryInstance.getComponents(type);
+				Entity entity = entityFactoryManager.create(components);
+
+				int x = Gdx.input.getX();
+				int y = Gdx.input.getY();
+				UnitCoordinates coordinates = new UnitCoordinates(camera);
+				
+				Position position = new Position(coordinates.coordinateAtPixel(x, y));
+				entity.addComponent(position);
+				
+				Director.instance.send(CommandEvent.Type.ENTITY_SELECTED, entity.getId());
+			}
+			catch (Exception e)
+			{
+				notificationHud.setText("Error while parsing clipboard entity data. See stack trace.");
+				e.printStackTrace();
+			}
+		}
+		
+		@Command(name="delete selected (entity)", bindings=@Shortcut({Keys.DEL}))
+		public void deleteSelectedEntity()
+		{
+			if (reflexHud.getEntity() != null)
+			{
+				notificationHud.setText("Deleted entity %s.", reflexHud.getEntity());
+				world.deleteEntity(reflexHud.getEntity());
+				Director.instance.send(CommandEvent.Type.ENTITY_SELECTED, -1);
+			}
+			else
+			{
+				notificationHud.setText("No entity selected. Unable to delete.");
 			}
 		}
 

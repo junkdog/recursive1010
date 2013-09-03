@@ -91,44 +91,11 @@ public class RecursiveEditorScreen implements Screen
 	
 	private void initializeEntities(World world)
 	{
-		// Entity background = world.createEntity();
-		// background.addComponent(new BackgroundColor(Color.WHITE));
-		// background.addComponent(new JsonKey("BACKGROUND"));
-		// world.addEntity(background);
-		//
-		// JsonEntitySerializer json = new JsonEntitySerializer(OutputType.minimal);
-		// System.out.println(json.toJson(background, null));
 		entityFactory.create("BACKGROUND");
-//		entityFactory.create("LS_DRAGON");
+		entityFactory.create("LS_DRAGON");
+//		entityFactory.create("LS_BUSH");
 //		entityFactory.create("LS_TREE");
-		Entity e = entityFactory.create("LS_BOX");
-//		world.getManager(GroupManager.class).add(e, "level");
-
-		DeterministicLSystem lSystem = new DeterministicLSystem();
-		lSystem.axiom = "0";
-
-		lSystem.productions = new String[]{"0=1[0]0", "1=11"};
-		lSystem.iteration = 5;
-		lSystem.requestUpdate = false;
-
-		Entity e2 = world.createEntity()
-			.addComponent(new Position(1, 1))
-			.addComponent(new Cullable())
-			.addComponent(new Size())
-			.addComponent(new Velocity(2, 1))
-			.addComponent(lSystem)
-			.addComponent(new TurtleProcessor()
-				.put('0', TurtleCommand.DRAW_FORWARD)
-				.put('1', TurtleCommand.DRAW_FORWARD)
-				.put('[', TurtleCommand.PUSH_AND_TURN_LEFT)
-				.put(']', TurtleCommand.POP_AND_TURN_RIGHT)
-			);
-
-		JsonEntitySerializer serializer = new JsonEntitySerializer(OutputType.json);
-//		System.out.println(serializer.toJson(e, "LS_TREE"));
-//		System.out.println();
-//		System.out.println(serializer.toJson(lsTree, "LS_TREE_2"));
-
+//		Entity e = entityFactory.create("LS_TREE");
 	}
 
 	private static void initInputProcessing(Stage ui, OrthographicCamera camera, World world)
@@ -172,7 +139,7 @@ public class RecursiveEditorScreen implements Screen
 		world.setSystem(new CameraInfoSystem(camera, spriteBatch));
 		world.setSystem(new MouseInfoSystem(camera, spriteBatch));
 		world.setSystem(new InputHoverSystem(camera));
-		world.setSystem(new UiDebugSystem());
+		world.setSystem(new UiDebugSystem(camera));
 
 		world.initialize();
 

@@ -20,9 +20,9 @@ public final class DeterministicLSystem extends Component
 	@Override
 	public String toString()
 	{
+		String resultLength = result != null ? String.valueOf(result.length) : "null";
+		
 		return "DeterministicLSystem(axiom=" + axiom + ", productions=" + Arrays.toString(productions) +
-			", iteration=" + iteration + ", requestUpdate=" + requestUpdate + ", result.length=" + result.length + ")";
+			", iteration=" + iteration + ", requestUpdate=" + requestUpdate + ", result.length=" + resultLength + ")";
 	}
-	
-	
 }

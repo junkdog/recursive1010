@@ -48,6 +48,9 @@ public class LSystemSpriteGenerator extends Manager
 	private void process(Entity e)
 	{
 		entities.add(e);
+		
+		DeterministicLSystem ls = deterministicLSystemMapper.get(e);
+		if (ls.result == null) return;
 
 		Size size = sizeMapper.get(e);
 		Vector2 displace = anchorPointMapper.get(e).offset;
@@ -55,9 +58,9 @@ public class LSystemSpriteGenerator extends Manager
 		PixmapTurtle turtle = new PixmapTurtle(size.width, size.height, displace.x, displace.y);
 		TurtleInterpreter interpreter = new TurtleInterpreter(turtle);
 		
-		DeterministicLSystem ls = deterministicLSystemMapper.get(e);
 		
 		TurtleProcessor processor = turtleProcessorMapper.get(e);
+
 		
 		for (int i = 0; ls.result.length > i; i++)
 		{

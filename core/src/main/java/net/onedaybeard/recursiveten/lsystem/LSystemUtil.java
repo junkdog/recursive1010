@@ -11,7 +11,8 @@ public class LSystemUtil
 		{
 			assert production.charAt(1) == '=';
 			
-			lSystem.addProduction(production.charAt(0), production.substring(2));
+			if (production.length() > 2)
+				lSystem.addProduction(production.charAt(0), production.substring(2));
 		}
 		return lSystem;
 	}
