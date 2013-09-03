@@ -21,7 +21,6 @@ public enum Director implements Disposable
 	@Getter	private final SpriteBatch spriteBatch;
 	@Getter private Screen screen;
 	
-//	private AssetManager assetManager;
 	@Setter @Getter private EventSystem eventSystem;
 
 	private Array<Screen> screenStack;
@@ -101,35 +100,4 @@ public enum Director implements Disposable
 	{
 		eventSystem.send(type, value);
 	}
-//	
-//	public void send(DebugEvent.Type type, int value)
-//	{
-//		broadcasterSystem.send(type, value);
-//	}
-//	
-//	public void send(HudEvent.Type type, float value)
-//	{
-//		broadcasterSystem.send(type, value);
-//	}
-//
-//	public void send(GameOverEvent.Type type)
-//	{
-//		broadcasterSystem.send(type);
-//	}
-//	
-//	public void send(SoundEvent.Type type, AudioResource sound)
-//	{
-//		if (true)
-//			return;
-//		
-//		if (broadcasterSystem != null)
-//			broadcasterSystem.send(type, sound);
-//		else
-//			audioPlayer.playSoundEvent(type, sound);
-//	}
-//	
-//	public void addEventReceiver(Actor actor)
-//	{
-//		broadcasterSystem.addReceiver(actor);
-//	}
 }

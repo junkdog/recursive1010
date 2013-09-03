@@ -2,10 +2,7 @@ package net.onedaybeard.recursiveten.system.debug;
 
 import lombok.ArtemisSystem;
 import lombok.Profile;
-import net.onedaybeard.recursiveten.component.AnchorPoint;
 import net.onedaybeard.recursiveten.component.Position;
-import net.onedaybeard.recursiveten.component.Scale;
-import net.onedaybeard.recursiveten.component.Size;
 import net.onedaybeard.recursiveten.profile.Profiler;
 
 import com.artemis.Entity;

@@ -7,8 +7,8 @@ import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.component.Scale;
 import net.onedaybeard.recursiveten.component.Size;
 import net.onedaybeard.recursiveten.event.CommandEvent;
-import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.event.CommandEvent.Type;
+import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 

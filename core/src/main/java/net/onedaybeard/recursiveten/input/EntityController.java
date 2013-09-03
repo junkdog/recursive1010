@@ -1,7 +1,6 @@
 package net.onedaybeard.recursiveten.input;
 
 import net.onedaybeard.dominatrix.artemis.EntityFactoryManager;
-import net.onedaybeard.recursiveten.component.JsonKey;
 import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.component.Renderable;
 import net.onedaybeard.recursiveten.manager.EntityTracker;
@@ -10,8 +9,6 @@ import net.onedaybeard.recursiveten.util.UnitCoordinates;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;

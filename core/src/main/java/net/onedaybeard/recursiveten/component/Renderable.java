@@ -1,11 +1,10 @@
 package net.onedaybeard.recursiveten.component;
 
 import lombok.EqualsAndHashCode;
+import net.onedaybeard.dominatrix.artemis.ExcludeFromJson;
 
 import com.artemis.Component;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-
-import net.onedaybeard.dominatrix.artemis.ExcludeFromJson;
 
 @EqualsAndHashCode(callSuper=false) @ExcludeFromJson
 public final class Renderable extends Component

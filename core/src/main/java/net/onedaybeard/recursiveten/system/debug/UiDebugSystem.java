@@ -27,6 +27,7 @@ import net.onedaybeard.recursiveten.event.CommandEvent;
 import net.onedaybeard.recursiveten.event.CommandEvent.Type;
 import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
+import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
 
 import com.artemis.Component;
@@ -39,7 +40,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
-@ArtemisSystem()
+@ArtemisSystem(
+	systems=EventSystem.class)
 public final class UiDebugSystem extends VoidEntitySystem
 {
 	
@@ -104,7 +106,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 		multiplexer.addProcessor(new KeyflectionInputProcessor(new Shortcuts()));
 		multiplexer.addProcessor(stage);
 		
-		Director.instance.getEventSystem().addReceiver(new CommandEventListener()
+		eventSystem.addReceiver(new CommandEventListener()
 		{
 			@Override
 			protected boolean onReceive(CommandEvent event, Type type)

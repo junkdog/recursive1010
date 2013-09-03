@@ -18,7 +18,8 @@ import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.manager.AnchorPointManager;
 import net.onedaybeard.recursiveten.manager.EntityTracker;
 import net.onedaybeard.recursiveten.manager.LSystemResolverManager;
-import net.onedaybeard.recursiveten.manager.LSystemSpriteManager;
+import net.onedaybeard.recursiveten.manager.LSystemSpriteGenerator;
+import net.onedaybeard.recursiveten.manager.LSystemUpdateCompletionManager;
 import net.onedaybeard.recursiveten.system.debug.AnchorPointRenderer;
 import net.onedaybeard.recursiveten.system.debug.CameraInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.EntityOutlineRenderer;
@@ -26,7 +27,6 @@ import net.onedaybeard.recursiveten.system.debug.InputHoverSystem;
 import net.onedaybeard.recursiveten.system.debug.MouseInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.UiDebugSystem;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
-import net.onedaybeard.recursiveten.system.input.CameraController;
 import net.onedaybeard.recursiveten.system.input.InputHandlerSystem;
 import net.onedaybeard.recursiveten.system.render.BackgroundRenderSystem;
 import net.onedaybeard.recursiveten.system.render.SpriteRenderSystem;
@@ -35,8 +35,6 @@ import net.onedaybeard.recursiveten.system.spatial.SpritePositionUpdateSystem;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -154,7 +152,8 @@ public class RecursiveGameScreen implements Screen
 
 		world.setManager(new LSystemResolverManager());
 		world.setManager(new AnchorPointManager());
-		world.setManager(new LSystemSpriteManager());
+		world.setManager(new LSystemSpriteGenerator());
+		world.setManager(new LSystemUpdateCompletionManager());
 		world.setManager(new EntityTracker());
 
 		entityFactory = world.setManager(

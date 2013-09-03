@@ -1,11 +1,11 @@
 package net.onedaybeard.recursiveten.util;
 
+import net.onedaybeard.dominatrix.annotation.Sloppy;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
-import net.onedaybeard.dominatrix.annotation.Sloppy;
 
 @Sloppy("it's useful, but fucking suxxors - confuses the brogrammer in me")
 public class UnitCoordinates

@@ -1,10 +1,10 @@
 package net.onedaybeard.recursiveten.component;
 
-import net.onedaybeard.dominatrix.artemis.JsonId;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import net.onedaybeard.dominatrix.artemis.JsonId;
 
 import com.artemis.Component;
 

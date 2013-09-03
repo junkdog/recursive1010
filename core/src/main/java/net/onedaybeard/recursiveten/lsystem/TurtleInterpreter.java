@@ -2,10 +2,10 @@ package net.onedaybeard.recursiveten.lsystem;
 
 import java.util.Random;
 
-import net.onedaybeard.recursiveten.component.TurtleProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import net.onedaybeard.recursiveten.component.TurtleProcessor;
 
 @AllArgsConstructor @ToString
 public class TurtleInterpreter

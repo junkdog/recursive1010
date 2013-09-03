@@ -7,7 +7,6 @@ import net.onedaybeard.recursiveten.component.Size;
 
 import com.artemis.Entity;
 import com.artemis.Manager;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 @ArtemisManager(
@@ -15,21 +14,13 @@ import com.badlogic.gdx.math.Vector2;
 	optional={AnchorPoint.class, Scale.class})
 public final class AnchorPointManager extends Manager
 {
-	private AnchorPoint defaultAnchor;
-	
 	@Override
-	protected void initialize()
-	{
-		defaultAnchor = new AnchorPoint(0.5f, 0.5f);
-	}
+	protected void initialize() {}
 	
 	@Override
 	public void added(Entity e)
 	{
-		AnchorPoint anchor = getAnchorPoint(e);
-		Scale scale = getScale(e);
-		
-		updateAnchorPoint(anchor, sizeMapper.get(e));
+		updateAnchorPoint(getAnchorPoint(e), sizeMapper.get(e));
 	}
 
 	private AnchorPoint getAnchorPoint(Entity e)
@@ -56,14 +47,9 @@ public final class AnchorPointManager extends Manager
 		return scale;
 	}
 	
-	private static void updateSpriteScale(Sprite sprite, float scale)
+	private static void updateAnchorPoint(AnchorPoint anchorPoint, Size size)
 	{
-		sprite.setScale(scale);
-	}
-
-	private static void updateAnchorPoint(AnchorPoint AnchorPoint, Size size)
-	{
-		Vector2 anchorPoint = AnchorPoint.point;
-		anchorPoint.set(size.width * anchorPoint.x, size.height * anchorPoint.y);
+		Vector2 anchor = anchorPoint.point;
+		anchorPoint.calculated.set(size.width * anchor.x, size.height * anchor.y);
 	}
 }

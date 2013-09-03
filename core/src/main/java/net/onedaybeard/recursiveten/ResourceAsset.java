@@ -1,7 +1,6 @@
 package net.onedaybeard.recursiveten;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public enum ResourceAsset
 {

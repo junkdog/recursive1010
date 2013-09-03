@@ -15,13 +15,13 @@ public final class DeterministicLSystem extends Component
 	public int iteration = 0;
 	public boolean requestUpdate = true;
 	
-	public transient String result;
+	public transient char[] result;
 
 	@Override
 	public String toString()
 	{
 		return "DeterministicLSystem(axiom=" + axiom + ", productions=" + Arrays.toString(productions) +
-			", iteration=" + iteration + ", requestUpdate=" + requestUpdate + ", result.length()=" + result.length() + ")";
+			", iteration=" + iteration + ", requestUpdate=" + requestUpdate + ", result.length=" + result.length + ")";
 	}
 	
 	

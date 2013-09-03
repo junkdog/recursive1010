@@ -3,7 +3,6 @@ package net.onedaybeard.recursiveten.manager;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import lombok.ArtemisManager;
@@ -39,7 +38,7 @@ public class LSystemResolverManager extends Manager
 	private SizeTurtle turtle;
 	private TurtleInterpreter interpreter;
 	
-	private Set<Entity> entities = new HashSet<Entity>();
+	private Set<Entity> entities;
 
 	private KeyflectionInputProcessor keyflectionInputProcessor;
 
@@ -47,6 +46,7 @@ public class LSystemResolverManager extends Manager
 	@Override
 	protected void initialize() 
 	{
+		entities = new HashSet<Entity>();
 		turtle = new SizeTurtle();
 		interpreter = new TurtleInterpreter(turtle);
 	}
@@ -72,12 +72,10 @@ public class LSystemResolverManager extends Manager
 			return;
 		
 		LSystem lSystem = LSystemUtil.toLSystem(ls);
-		ls.result = lSystem.getIteration(ls.iteration);
-		
-		char[] commands = ls.result.toCharArray();
+		ls.result = lSystem.getIteration(ls.iteration).toCharArray();
 		
 		TurtleProcessor processor = turtleProcessorMapper.get(e);
-		calculateSize(commands, processor, maxTextureDimensionMapper.get(e).value);
+		calculateSize(ls.result, processor, maxTextureDimensionMapper.get(e).value);
 		Rectangle turtleSize = turtle.getSize();
 		Size size = sizeMapper.get(e);
 		size.width = turtleSize.width;
@@ -88,8 +86,6 @@ public class LSystemResolverManager extends Manager
 		anchor.calculated.y = turtleSize.height * anchor.point.y;
 		anchor.offset.x = turtleSize.x;
 		anchor.offset.y = turtleSize.y;
-
-		ls.requestUpdate = false;
 	}
 
 	private void calculateSize(char[] commands, TurtleProcessor processor, float max)

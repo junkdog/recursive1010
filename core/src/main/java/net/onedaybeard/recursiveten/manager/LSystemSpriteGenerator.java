@@ -25,7 +25,7 @@ import com.badlogic.gdx.math.Vector2;
 @ArtemisManager(
 	requires={AnchorPoint.class, DeterministicLSystem.class, Size.class, TurtleProcessor.class},
 	systems=EventSystem.class)
-public class LSystemSpriteManager extends Manager
+public class LSystemSpriteGenerator extends Manager
 {
 	private Set<Entity> entities = new HashSet<Entity>();
 
@@ -43,7 +43,8 @@ public class LSystemSpriteManager extends Manager
 	@Override
 	public void changed(Entity e)
 	{
-		process(e);
+		if (deterministicLSystemMapper.get(e).requestUpdate)
+			process(e);
 	}
 
 	private void process(Entity e)
@@ -57,18 +58,12 @@ public class LSystemSpriteManager extends Manager
 		TurtleInterpreter interpreter = new TurtleInterpreter(turtle);
 		
 		DeterministicLSystem ls = deterministicLSystemMapper.get(e);
-//		if (!ls.requestUpdate)
-//			return;
-		
-		LSystem lSystem = LSystemUtil.toLSystem(ls);
-		ls.result = lSystem.getIteration(ls.iteration);
 		
 		TurtleProcessor processor = turtleProcessorMapper.get(e);
-		char[] commands = ls.result.toCharArray();
 		
-		for (int i = 0; commands.length > i; i++)
+		for (int i = 0; ls.result.length > i; i++)
 		{
-			interpreter.execute(parseCommand(commands[i], processor.commands), processor);
+			interpreter.execute(parseCommand(ls.result[i], processor.commands), processor);
 		}
 		
 		Vector2 offset = anchorPointMapper.get(e).calculated;

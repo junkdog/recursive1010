@@ -9,7 +9,6 @@ import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
 import net.onedaybeard.recursiveten.component.TurtleProcessor.CommandBinding;
 import net.onedaybeard.recursiveten.lsystem.Turtle;
-import net.onedaybeard.recursiveten.lsystem.Turtle;
 import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.profile.Profiler;
 
@@ -19,9 +18,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
@@ -63,7 +59,7 @@ public final class TurtleSystem extends EntityProcessingSystem
 		DeterministicLSystem ls = deterministicLSystemMapper.get(e);
 		TurtleProcessor processor = turtleProcessorMapper.get(e);
 		
-		char[] commands = ls.result.toCharArray();
+		char[] commands = ls.result;
 		
 		turtle.reset();
 		turtle.setPosition(positionMapper.get(e).pos);

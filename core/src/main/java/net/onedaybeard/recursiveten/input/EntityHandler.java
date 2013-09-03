@@ -2,8 +2,6 @@ package net.onedaybeard.recursiveten.input;
 
 import net.onedaybeard.recursiveten.Director;
 import net.onedaybeard.recursiveten.event.CommandEvent;
-import net.onedaybeard.recursiveten.event.CommandEvent.Type;
-import net.onedaybeard.recursiveten.event.CommandEventListener;
 
 import com.artemis.Entity;
 import com.badlogic.gdx.Gdx;

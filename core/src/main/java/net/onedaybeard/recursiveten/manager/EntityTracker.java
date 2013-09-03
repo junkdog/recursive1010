@@ -5,7 +5,6 @@ import net.onedaybeard.recursiveten.component.Renderable;
 
 import com.artemis.Entity;
 import com.artemis.Manager;
-import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
