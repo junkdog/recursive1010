@@ -13,8 +13,8 @@ public class Recursive1010Editor implements ApplicationListener
 	{
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.useGL20 = true;
-		config.width = 1200;
-		config.height = 800;
+		config.width = 1400;
+		config.height = 900;
 		new LwjglApplication(new Recursive1010Editor(), config);
 	}
 

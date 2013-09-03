@@ -23,7 +23,7 @@ public class PixmapTurtle extends BaseTurtle
 		super();
 		this.originX = originX * 2; // magic number?
 //		this.originX = originX;
-		this.originY = originY;
+		this.originY = originY * 2;
 		pixmap = new Pixmap((int)width, (int)height, Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
 		getTurtle().position.set(originX, originY);

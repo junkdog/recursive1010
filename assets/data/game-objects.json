@@ -89,5 +89,62 @@
 				"vector": { "x": 2, "y": 1 }
 			}
 		}
+	},
+	LS_KOCH_STAR:{
+		"components": {
+			"AnchorPoint": {},
+			"Cullable": {},
+			"DeterministicLSystem": {
+				"axiom": "F++F++F",
+				"productions": [ "F=F+F--F+F" ],
+				"iteration": 4
+			},
+			"JsonKey": { "name": "LS_KOCH_STAR" },
+			"MaxTextureDimension": { "value": 768 },
+			"Position": {
+				"pos": { "x": 256 }
+			},
+			"Size": {},
+			"TurtleProcessor": {
+				"commands": [
+					{ "command": "DRAW_FORWARD", "key": "F" },
+					{ "command": "MOVE_FORWARD", "key": "f" },
+					{ "command": "TURN_LEFT", "key": "-" },
+					{ "command": "TURN_RIGHT", "key": "+" }
+				],
+				"moveAmount": 0.59428704,
+				"turnAmount": 60
+			}
+		}
+	},
+	LS_BOX:{
+		"components": {
+			"AnchorPoint": {},
+			"Cullable": {},
+			"DeterministicLSystem": {
+				"axiom": "F[X]++F++F[X]++F",
+				"productions": [ "F=FF", "X=F[-X]++F++F[X+]++F", "S=FF-F+FF" ],
+				"iteration": 4
+			},
+			"JsonKey": { "name": "LS_KOCH_STAR" },
+			"MaxTextureDimension": { "value": 768 },
+			"Position": {
+				"pos": { "x": 256 }
+			},
+			"Size": {},
+			"TurtleProcessor": {
+				"commands": [
+					{ "command": "DRAW_FORWARD", "key": "F" },
+					{ "command": "DRAW_FORWARD", "key": "S" },
+					{ "command": "MOVE_FORWARD", "key": "f" },
+					{ "command": "TURN_LEFT", "key": "-" },
+					{ "command": "TURN_RIGHT", "key": "+" },
+					{ "key": "[", "command": "PUSH" },
+					{ "key": "]", "command": "POP" }
+				],
+				"moveAmount": 0.59428704,
+				"turnAmount": 45
+			}
+		}
 	}
 }

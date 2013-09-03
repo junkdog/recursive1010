@@ -81,6 +81,8 @@ public class LSystemResolverManager extends Manager
 		size.width = turtleSize.width;
 		size.height = turtleSize.height;
 		
+		System.out.printf("w=%.0f h=%.0f offset-x=%.0f offset-y=%.0f\n", turtleSize.width, turtleSize.height, turtleSize.x, turtleSize.y);
+		
 		AnchorPoint anchor = anchorPointMapper.get(e);
 		anchor.calculated.x = turtleSize.width * anchor.point.x;
 		anchor.calculated.y = turtleSize.height * anchor.point.y;
@@ -95,6 +97,7 @@ public class LSystemResolverManager extends Manager
 		{
 			interpreter.execute(parseCommand(commands[i], processor.commands), processor);
 		}
+		
 		Rectangle turtleSize = turtle.getSize();
 		System.out.println(turtleSize);
 		
@@ -102,7 +105,7 @@ public class LSystemResolverManager extends Manager
 		if (max > dim && (dim / max) > 0.95f)
 			return;
 		
-		processor.moveAmount /= 1 / (max / dim);
+		processor.moveAmount /= 1 / ((max * 0.98f) / dim);
 		calculateSize(commands, processor, max);
 	}
 	
@@ -142,7 +145,7 @@ public class LSystemResolverManager extends Manager
 			return new ShortcutComparator();
 		}
 		
-		@Command(name="help!", bindings=@Shortcut(Keys.PLUS))
+		@Command(name="increment iteration count", bindings=@Shortcut({Keys.ALT_LEFT, Keys.UP}))
 		public void incrementIteration()
 		{
 			eventSystem.send(CommandEvent.Type.CHANGE_ITERATION_COUNT, 1);
@@ -155,7 +158,7 @@ public class LSystemResolverManager extends Manager
 			}
 		}
 		
-		@Command(name="help!", bindings=@Shortcut(Keys.MINUS))
+		@Command(name="decrement iteration count", bindings=@Shortcut({Keys.ALT_LEFT, Keys.DOWN}))
 		public void decrementIteration()
 		{
 			for (Entity e : entities)
@@ -166,6 +169,16 @@ public class LSystemResolverManager extends Manager
 				e.changedInWorld();
 			}
 			eventSystem.send(CommandEvent.Type.CHANGE_ITERATION_COUNT, -1);
+		}
+		
+		@Command(name="recalculate lsystems", bindings=@Shortcut(Keys.F10))
+		public void recalculateLSystems()
+		{
+			for (Entity e : entities)
+			{
+				deterministicLSystemMapper.get(e).requestUpdate = true;
+				e.changedInWorld();
+			}
 		}
 		
 	}

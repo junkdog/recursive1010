@@ -30,9 +30,7 @@ public class LSystemSpriteGenerator extends Manager
 	private Set<Entity> entities = new HashSet<Entity>();
 
 	@Override
-	protected void initialize() 
-	{
-	}
+	protected void initialize() {}
 
 	@Override
 	public void added(Entity e)
