@@ -163,7 +163,7 @@ public class RecursiveGameScreen implements Screen
 		world.setManager(entityFactory);
 
 		Director.instance.setEventSystem(world.setSystem(new EventSystem()));
-		world.setSystem(new InputHandlerSystem(new CameraController(camera)));
+		world.setSystem(new InputHandlerSystem(camera));
 		world.setSystem(new PositionUpdateSystem());
 //		world.setSystem(new CullingSystem(camera));
 		world.setSystem(new SpritePositionUpdateSystem());

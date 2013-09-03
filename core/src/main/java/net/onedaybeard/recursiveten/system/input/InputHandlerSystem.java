@@ -1,77 +1,36 @@
 package net.onedaybeard.recursiveten.system.input;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import lombok.ArtemisSystem;
-import lombok.Getter;
-import lombok.Profile;
-import net.onedaybeard.recursiveten.manager.EntityTracker;
-import net.onedaybeard.recursiveten.profile.Profiler;
+import static net.onedaybeard.dominatrix.pool.Vector2Pool.free;
+import static net.onedaybeard.dominatrix.pool.Vector2Pool.vector2;
 
 import com.artemis.systems.VoidEntitySystem;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 
-@Profile(using=Profiler.class, enabled=Profiler.ENABLED)
-@ArtemisSystem(
-	managers=EntityTracker.class)
-public final class InputHandlerSystem extends VoidEntitySystem implements InputProcessor
+public class InputHandlerSystem extends VoidEntitySystem implements InputProcessor
 {
+	private final CameraController controller;
 	private final Vector2 lastPosition;
-	@Getter private final CameraController cameraController;
 	
-	private final Map<Integer, CameraController.State> keys;
-	
-	private int numberOfFingers = 0;
-	private int fingerOnePointer;
-	private int fingerTwoPointer;
-	private float lastPinchDistance;
-	private Vector2 fingerOne = new Vector2();
-	private Vector2 fingerTwo = new Vector2();
-	private boolean isPinchZooming = false;
-	
-	public InputHandlerSystem(CameraController cameraController)
+	private boolean isDragging;
+
+	public InputHandlerSystem(OrthographicCamera camera)
 	{
-		this.lastPosition = new Vector2();
-		this.cameraController = cameraController;
-		
-		keys = new HashMap<Integer, CameraController.State>();
-		keys.put(Keys.W, CameraController.State.MOVE_UP);
-		keys.put(Keys.S, CameraController.State.MOVE_DOWN);
-		keys.put(Keys.A, CameraController.State.MOVE_LEFT);
-		keys.put(Keys.D, CameraController.State.MOVE_RIGHT);
-		keys.put(Keys.E, CameraController.State.ZOOM_OUT);
-		keys.put(Keys.Q, CameraController.State.ZOOM_IN);
-		keys.put(Keys.SHIFT_LEFT, CameraController.State.FAST_CONTROLS);
-		keys.put(Keys.SHIFT_RIGHT, CameraController.State.FAST_CONTROLS);
+		this.controller = new CameraController(camera);
+		lastPosition = new Vector2();
 	}
-	
+
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		boolean consumed = true;
-		
-		if (keys.containsKey(keycode))
-			cameraController.addState(keys.get(keycode));
-		else if (Keys.ESCAPE == keycode)
-			Gdx.app.exit();
-		else
-			consumed = false;
-		
-		return consumed;
+		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode)
 	{
-		boolean consumed = keys.containsKey(keycode);
-		if (consumed)
-			cameraController.removeState(keys.get(keycode));
-		
-		return consumed;
+		return false;
 	}
 
 	@Override
@@ -81,95 +40,40 @@ public final class InputHandlerSystem extends VoidEntitySystem implements InputP
 	}
 
 	@Override
-	public boolean touchDown(int x, int y, int pointer, int button)
+	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
-		numberOfFingers++;
+		if (button != 1)
+			return false;
 		
-		if (numberOfFingers == 1)
-		{
-			fingerOnePointer = pointer;
-			fingerOne.set(x, y);
-			
-		}
-		else if (numberOfFingers == 2)
-		{
-			Vector2 tmpVector = new Vector2(x, y);
-			
-//			fingerTwoPointer = pointer;
-//			fingerTwo.set(x, y);
-//			fingerTwoPointer = pointer;
-//			fingerTwo.set(x, y);
-			tmpVector.set(x, y);
-			if (tmpVector.dst(fingerOne) > tmpVector.dst(fingerTwo))
-			{
-				fingerTwo = tmpVector;
-				fingerTwoPointer = pointer;
-			}
-			else
-			{
-				fingerOne = tmpVector;
-				fingerOnePointer = pointer;
-			}
-				
-			
-			lastPinchDistance = fingerOne.dst(fingerTwo);
-			isPinchZooming = true;
-		}
+		lastPosition.set(screenX, screenY);
+		isDragging = true;
 		
-		if (!isPinchZooming)
-		{
-			lastPosition.x = x;
-			lastPosition.y = y;
-		}
-		
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int x, int y, int pointer, int button)
-	{
-		numberOfFingers--;
 		return true;
 	}
 
 	@Override
-	public boolean touchDragged(int x, int y, int pointer)
+	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		if (pointer == fingerOnePointer)
-			fingerOne.set(x, y);
-		else if (pointer  == fingerTwoPointer)
-			fingerTwo.set(x, y);
+		if (button != 1)
+			return false;
 		
-		if (numberOfFingers == 2)
-		{
-			float distance =  fingerOne.dst(fingerTwo);
-			cameraController.zoom(lastPinchDistance / distance);
-			lastPinchDistance = distance;
-			
-			return true;
-		}
-		
-		// dpm't want to throw the panning around
-		if (isPinchZooming && numberOfFingers == 1) // removed 2nd finger
-		{
-			lastPosition.set(x, y);
-			isPinchZooming = false;
-		}
-		
-		int displaceX = (int)(lastPosition.x) - x;
-		int displaceY = (int)(lastPosition.y) - y;
-		
-		lastPosition.x = x;
-		lastPosition.y = y;
-
-		cameraController.touchMove(displaceX, -displaceY);
+		isDragging = false;
 		return true;
 	}
 
 	@Override
-	public boolean scrolled(int amount)
+	public boolean touchDragged(int screenX, int screenY, int pointer)
 	{
-		return false;
+		if (!isDragging)
+			return false;
+		
+		Vector2 vector22 = vector2(lastPosition).sub(screenX, screenY);
+		controller.moveCamera(vector22);
+		free(vector22);
+		
+		lastPosition.set(screenX, screenY);
+		
+		return true;
 	}
 
 	@Override
@@ -179,9 +83,15 @@ public final class InputHandlerSystem extends VoidEntitySystem implements InputP
 	}
 
 	@Override
+	public boolean scrolled(int amount)
+	{
+		controller.zoom(amount);
+		return false;
+	}
+
+	@Override
 	protected void processSystem()
 	{
-		cameraController.update(world.getDelta());
-		
+		controller.update();
 	}
 }

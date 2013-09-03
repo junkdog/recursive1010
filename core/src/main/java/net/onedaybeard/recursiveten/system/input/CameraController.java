@@ -1,87 +1,60 @@
 package net.onedaybeard.recursiveten.system.input;
 
-import java.util.EnumSet;
+import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 
-public final class CameraController
+public class CameraController
 {
-	public static enum State {ZOOM_IN, ZOOM_OUT, MOVE_RIGHT, MOVE_LEFT, MOVE_UP, MOVE_DOWN, FAST_CONTROLS}
+	private final OrthographicCamera camera;
+	private final UnitCoordinates unitCoordinates;
 	
-	private static final float MOVE_AMOUNT = 150f;
-	private static final float ZOOM_AMOUNT = .02f;
+	private float zoomBy;
 
-	private final EnumSet<State> stateSet;
-	final OrthographicCamera camera;
-	
-	private boolean scheduledTouchMove = false;
-	private float fastControlMultiplier;
-	
-	public CameraController(OrthographicCamera camera)
+	CameraController(OrthographicCamera camera)
 	{
 		this.camera = camera;
-		stateSet = EnumSet.noneOf(State.class);
+		unitCoordinates = new UnitCoordinates(camera);
 	}
 	
-	public void addState(State state)
+	void moveCamera(Vector2 displacement)
 	{
-		stateSet.add(state);
-	}
-	
-	public void removeState(State state)
-	{
-		stateSet.remove(state);
-	}
-	
-	public void touchMove(float x, float y)
-	{
-		camera.position.x += x * camera.zoom;
-		camera.position.y += y * camera.zoom;
-		
-		scheduledTouchMove = true;
-	}
-	
-	public void update(float delta)
-	{
-		if ((stateSet.isEmpty() || (stateSet.size() == 1 && stateSet.contains(State.FAST_CONTROLS)))
-			&& !scheduledTouchMove)
-			return;
-		
-		fastControlMultiplier = (stateSet.contains(State.FAST_CONTROLS)) ? 3f : 1f;
-		
-		if (stateSet.contains(State.MOVE_UP))
-			camera.position.y += MOVE_AMOUNT * delta * fastControlMultiplier;
-		else if (stateSet.contains(State.MOVE_DOWN))
-			camera.position.y -= MOVE_AMOUNT * delta * fastControlMultiplier;
-		
-		if (stateSet.contains(State.MOVE_LEFT))
-			camera.position.x -= MOVE_AMOUNT * delta * fastControlMultiplier;
-		else if (stateSet.contains(State.MOVE_RIGHT))
-			camera.position.x += MOVE_AMOUNT * delta * fastControlMultiplier;
-		
-		if (stateSet.contains(State.ZOOM_IN))
-			camera.zoom = normalizeZoom(camera.zoom + ZOOM_AMOUNT * fastControlMultiplier);
-		else if (stateSet.contains(State.ZOOM_OUT))
-			camera.zoom = normalizeZoom(camera.zoom - ZOOM_AMOUNT * fastControlMultiplier);
-		
-		scheduledTouchMove = false; 
+		Vector2 units = unitCoordinates.screenCoordinateAtPixel(displacement);
+		camera.position.add(units.x, -units.y, 0);
 		camera.update();
 	}
-
-	public void zoom(float factor)
+	
+	public void zoom(int amount)
 	{
-		camera.zoom = normalizeZoom(camera.zoom * factor);
-		scheduledTouchMove = true;
+		zoomBy += amount * 0.1f * camera.zoom;
 	}
 	
-	private float normalizeZoom(float zoomFactor)
+	void update()
 	{
-		if (zoomFactor > 5f)
-			zoomFactor = 5f;
+		if (zoomBy == 0)
+			return;
 		
-		if (zoomFactor < .5f)
-			zoomFactor = .5f;
+		Vector2 coordinate = unitCoordinates.coordinateAtPixel(Gdx.input.getX(), Gdx.input.getY());
+		Vector2 cursorPercent = getScreenCursorPercent();
 		
-		return zoomFactor;
+		camera.zoom += zoomBy;
+		zoomBy = 0;
+		
+		Vector2 dimensions =  new Vector2(camera.viewportWidth * camera.zoom,
+			camera.viewportHeight * camera.zoom);
+		
+		camera.position.x = coordinate.x + (dimensions.x / 2) - (cursorPercent.x * dimensions.x);
+		camera.position.y = coordinate.y - (dimensions.y / 2) + (cursorPercent.y * dimensions.y);
+		camera.update();
+	}
+	
+	private static Vector2 getScreenCursorPercent()
+	{
+		Vector2 percent = new Vector2(Gdx.input.getX() / (float)Gdx.graphics.getWidth(),
+			Gdx.input.getY() / (float)Gdx.graphics.getHeight());
+		
+		return percent;
 	}
 }
