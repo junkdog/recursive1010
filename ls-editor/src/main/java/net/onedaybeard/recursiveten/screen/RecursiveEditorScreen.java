@@ -47,7 +47,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 
-public class RecursiveGameScreen implements Screen
+public class RecursiveEditorScreen implements Screen
 {
 	private static final float MIN_DELTA = 1 / 24f;
 
@@ -63,7 +63,7 @@ public class RecursiveGameScreen implements Screen
 
 	// private TemporalMultiplier timeMultiplier;
 
-	public RecursiveGameScreen()
+	public RecursiveEditorScreen()
 	{
 		ui = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, Director.instance.getSpriteBatch());
 
@@ -162,11 +162,8 @@ public class RecursiveGameScreen implements Screen
 
 		Director.instance.setEventSystem(world.setSystem(new EventSystem()));
 		world.setSystem(new InputHandlerSystem(camera));
-		world.setSystem(new PositionUpdateSystem());
-//		world.setSystem(new CullingSystem(camera));
 		world.setSystem(new SpritePositionUpdateSystem());
 		world.setSystem(new BackgroundRenderSystem());
-//		world.setSystem(new TurtleSystem(camera));
 		world.setSystem(new SpriteRenderSystem(spriteBatch, camera));
 		world.setSystem(new EntityOutlineRenderer(camera));
 		world.setSystem(new AnchorPointRenderer(camera));

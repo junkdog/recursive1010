@@ -1,5 +1,6 @@
 package net.onedaybeard.recursiveten.system.debug;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
@@ -13,6 +14,7 @@ import net.onedaybeard.dominatrix.experimental.ui.EntityInspectorHud;
 import net.onedaybeard.dominatrix.experimental.ui.EntityInspectorHud.JsonKeyResolver;
 import net.onedaybeard.dominatrix.experimental.ui.NotificationHud;
 import net.onedaybeard.dominatrix.experimental.ui.SystemsHud;
+import net.onedaybeard.dominatrix.reflect.FieldTypeWriter;
 import net.onedaybeard.keyflection.CommandController;
 import net.onedaybeard.keyflection.KeyflectionInputProcessor;
 import net.onedaybeard.keyflection.annotation.Command;
@@ -77,6 +79,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 		});
 		
 		reflexHud = new ComponentReflexHud(skin, stage);
+		reflexHud.addParser(new StringArrayFieldWriter());
 		helpOverlay = new CommandHelpOverlay(skin, stage);
 		notificationHud = new NotificationHud(skin, stage);
 		systemsHud = new SystemsHud(skin, stage, world);
@@ -224,5 +227,24 @@ public final class UiDebugSystem extends VoidEntitySystem
 		{
 			return new ShortcutComparator();
 		}
+	}
+	
+	private static class StringArrayFieldWriter implements FieldTypeWriter
+	{
+
+		@Override
+		public Class<?> getType()
+		{
+			return String[].class;
+		}
+
+		@Override
+		public Object parse(String value, Field reference)
+		{
+			assert value.startsWith("[") && value.endsWith("]");
+			String s = value.substring(1, value.length() - 2);
+			return s.split(", ");
+		}
+		
 	}
 }

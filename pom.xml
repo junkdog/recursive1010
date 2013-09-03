@@ -48,6 +48,12 @@
 			</modules>
 		</profile>
 		<profile>
+			<id>editor</id>
+			<modules>
+				<module>ls-editor</module>
+			</modules>
+		</profile>
+		<profile>
 			<id>android</id>
 			<modules>
 				<module>android</module>

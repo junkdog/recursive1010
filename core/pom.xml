@@ -15,7 +15,7 @@
 
 	<properties>
 		<gdx.version>0.9.9-SNAPSHOT</gdx.version>
-		<agrotera.version>0.2.2-SNAPSHOT</agrotera.version>
+		<agrotera.version>0.2.1</agrotera.version>
 		<artemis.odb.version>0.3.4</artemis.odb.version>
 		<lombok-pg.version>0.11.3</lombok-pg.version>
 		<keyflection.version>0.1.0-SNAPSHOT</keyflection.version>
