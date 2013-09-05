@@ -7,8 +7,9 @@ public class LSystemUtil
 	public static LSystem toLSystem(DeterministicLSystem ls)
 	{
 		LSystem lSystem  = new LSystem(ls.axiom);
-		for (String production : ls.productions)
+		for (int i = 0, s = ls.productions.length; s > i; i++)
 		{
+			String production = ls.productions[i];
 			assert production.charAt(1) == '=';
 			
 			if (production.length() > 2)

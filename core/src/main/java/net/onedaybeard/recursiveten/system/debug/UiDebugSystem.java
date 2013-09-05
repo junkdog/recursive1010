@@ -33,6 +33,7 @@ import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
+import net.onedaybeard.recursiveten.ui.LSystemEditorHud;
 import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.Component;
@@ -60,6 +61,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 	private CommandHelpOverlay helpOverlay;
 	private NotificationHud notificationHud;
 	private ComponentsHud componentsHud;
+	private LSystemEditorHud lsystemHud;
 	private SystemsHud systemsHud;
 
 	@Getter private InputMultiplexer multiplexer;
@@ -106,6 +108,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 				setEntity(world.getEntity(entityId));
 			}
 		});
+		lsystemHud = new LSystemEditorHud(skin, stage);
 		
 		inspectorHud.setVisible(true);
 		initInput();
@@ -151,6 +154,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 	{
 		inspectorHud.setEntity(e);
 		reflexHud.setEntity(e);
+		lsystemHud.setEntity(e);
 	}
 
 	@Override
@@ -215,6 +219,12 @@ public final class UiDebugSystem extends VoidEntitySystem
 		public void toggleSystems()
 		{
 			systemsHud.toggle();
+		}
+		
+		@Command(name="lsystem", bindings=@Shortcut(Keys.F9))
+		public void toggleLSystemEditor()
+		{
+			lsystemHud.toggle();
 		}
 		
 		@Command(name="copy json (entity)", bindings=@Shortcut({Keys.CONTROL_LEFT, Keys.C}))

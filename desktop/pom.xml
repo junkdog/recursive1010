@@ -22,24 +22,27 @@
 			<artifactId>recursive-1010-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx</artifactId>
 			<version>${gdx.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-backend-lwjgl</artifactId>
 			<version>${gdx.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-platform</artifactId>
 			<version>${gdx.version}</version>
 			<classifier>natives-desktop</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.github.peichhorn</groupId>
+			<artifactId>lombok-pg</artifactId>
+			<version>${lombok.pg.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -74,6 +77,7 @@
 							<target>
 								<java fork="true" classname="${mainClass}" classpathref="maven.test.classpath">
 									<sysproperty key="java.library.path" value="target/natives"/>
+									<jvmarg line="-ea"/>
 								</java>
 							</target>
 						</configuration>
