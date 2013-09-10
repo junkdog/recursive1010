@@ -163,8 +163,8 @@ public final class UiDebugSystem extends VoidEntitySystem
 		stage.act();
 		stage.draw();
 		
-		lsystemHud.drawDebug();
-		Table.drawDebug(stage);
+//		lsystemHud.drawDebug();
+//		Table.drawDebug(stage);
 	}
 
 	protected class Shortcuts implements CommandController

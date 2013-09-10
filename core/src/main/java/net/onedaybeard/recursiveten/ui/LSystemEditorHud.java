@@ -2,11 +2,10 @@ package net.onedaybeard.recursiveten.ui;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
-
-import java.lang.reflect.Field;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.onedaybeard.dominatrix.experimental.ui.BackgroundTexture;
@@ -15,9 +14,7 @@ import net.onedaybeard.dominatrix.reflect.FieldTypeWriter;
 import net.onedaybeard.dominatrix.reflect.Reflex;
 import net.onedaybeard.dominatrix.reflect.Vector2Writer;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
-import net.onedaybeard.recursiveten.component.MaxTextureDimension;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
-import net.onedaybeard.recursiveten.component.TurtleProcessor.CommandBinding;
 
 import com.artemis.Component;
 import com.artemis.ComponentMapper;
@@ -34,14 +31,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree;
-import com.badlogic.gdx.scenes.scene2d.ui.Tree.Node;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
-import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent;
-import com.badlogic.gdx.utils.Array;
-import com.esotericsoftware.tablelayout.Cell;
 
 
 public final class LSystemEditorHud
@@ -57,13 +48,11 @@ public final class LSystemEditorHud
 	private final Color errorColor;
 	
 	private static final int PADDING = 5;
-	private static final int WIDTH_TYPE = 100;
 	private static final int WIDTH_LABEL = 200;
-	private static final int WIDTH_VALUE = 250;
+	private static final int WIDTH_VALUE = 150;
 	
-	private final ComponentMapper<MaxTextureDimension> maxTextureDimension;
 	private final ComponentMapper<DeterministicLSystem> lsystemMapper;
-	private final ComponentMapper<TurtleProcessor> tutrteProcessorMapper;
+	private final ComponentMapper<TurtleProcessor> turtleProcessorMapper;
 	
 	private final TextFieldFactory textFieldFactory;
 	
@@ -81,8 +70,7 @@ public final class LSystemEditorHud
 		ui.addActor(table);
 		
 		lsystemMapper = world.getMapper(DeterministicLSystem.class);
-		maxTextureDimension = world.getMapper(MaxTextureDimension.class);
-		tutrteProcessorMapper = world.getMapper(TurtleProcessor.class);
+		turtleProcessorMapper = world.getMapper(TurtleProcessor.class);
 		
 		textFieldFactory = new TextFieldFactory(table, productionsTable, commandsTable, skin, reflex);
 		
@@ -121,7 +109,6 @@ public final class LSystemEditorHud
 		table.clear();
 		productionsTable.clear();
 		commandsTable.clear();
-//		tree.clearChildren();
 		this.entity = e;
 		
 		if (e == null)
@@ -137,33 +124,14 @@ public final class LSystemEditorHud
 		
 		table.row();
 		
-		TurtleProcessor processor = tutrteProcessorMapper.get(e);
+		TurtleProcessor processor = turtleProcessorMapper.get(e);
 		table.add(new Label("TURTLE", skin)).expandX().align(Align.left);
 		table.row();
 		insertField(processor, "turnAmount");
 		textFieldFactory.insertCommands(processor);
 		
 		
-//		addHeader("L-SYSTEM", ls);
-//		Node lsystem = createHeader("L-SYSTEM", ls);
-//		createSubHeader(lsystem, "axiom");
-//		createSubHeader(lsystem, "iterations");
-//		Node productions = createSubHeader(lsystem, "productions");
-//		for (String production : ls.productions)
-//		{
-//			createSubHeader(productions, production);
-//		}
-		
-//		Node turtle = createHeader("TURTLE", processor);
-//		createSubHeader(turtle, "turnAmount");
-//		Node commands = createSubHeader(turtle, "commands");
-//		for (CommandBinding command : processor.commands)
-//		{
-//			createSubHeader(commands, command.toString());
-//		}
-		
 		packTable();
-//		tree.expandAll();
 	}
 
 	private void insertField(Component component, String label)
@@ -180,83 +148,15 @@ public final class LSystemEditorHud
 		commandsTable.debug();
 	}
 
-	private Cell addField(final Object instance, final Field field)
-	{
-		String value = reflex.on(instance, field).getAsString();
-		if (reflex.isEditable(field))
-		{
-			final TextFieldStyle style = new TextFieldStyle();
-			style.font = skin.getFont("default-font");
-			style.fontColor = Color.WHITE;
-			style.cursor = skin.getDrawable("cursor");
-			
-			TextField textField = new TextField(value, style);
-			textField.addCaptureListener(new InputListener()
-			{
-				@Override
-				public boolean keyDown(InputEvent event, int keycode)
-				{
-					if (keycode == Keys.ESCAPE || keycode == Keys.ENTER)
-					{
-						TextField text = (TextField)event.getListenerActor();
-						
-						boolean success = reflex.on(instance, field).set(text.getText());
-						style.fontColor = (success ? Color.WHITE : errorColor);
-						if (success)
-							text.setText(reflex.on(instance, field).getAsString());
-						
-						entity.changedInWorld();
-					}
-					if (keycode == Keys.ESCAPE)
-					{
-						Stage stage = event.getListenerActor().getStage();
-						stage.setKeyboardFocus(event.getListenerActor().getParent());
-						event.cancel();
-						
-						TextField text = (TextField)event.getListenerActor();
-						text.setText(reflex.on(instance, field).getAsString());
-					}
-					
-					return event.isCancelled();
-				}
-			});
-			textField.addListener(new FocusListener()
-			{
-				@Override
-				public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused)
-				{
-					TextField text = (TextField)event.getListenerActor();
-					text.setText(reflex.on(instance, field).getAsString());
-					
-					boolean success = reflex.on(instance, field).set(text.getText());
-					style.fontColor = (success ? Color.WHITE : errorColor);
-				}
-			});
-			table.add(textField);
-		}
-		
-		return null;
-	}
-	
-	private void addHeader(String string, DeterministicLSystem ls)
-	{
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void addField(String label, String field)
-	{
-//		new Field
-	}
-
 	private void packTable()
 	{
 		Stage stage = table.getStage();
 		if (stage == null)
 			return;
 		
-		table.setWidth(PADDING + WIDTH_TYPE + WIDTH_LABEL + WIDTH_VALUE + PADDING + 35);
-		table.setHeight(stage.getHeight() - 200 - PADDING * 2);
+		table.setWidth(PADDING + WIDTH_LABEL + WIDTH_VALUE + PADDING + 35);
+		table.setHeight(table.getPrefHeight());
+		System.out.println("pref height: " + table.getPrefHeight());
 		
 		float x = (stage.getWidth() - table.getWidth()) / 2;
 		float y = stage.getHeight() - 5 - table.getHeight();
@@ -264,109 +164,23 @@ public final class LSystemEditorHud
 		table.setPosition(x, y);
 	}
 	
-	private Array<Node> getFieldNodes(Component component)
-	{
-		Array<Node> nodes = new Array<Tree.Node>();
-		Field[] fields = component.getClass().getDeclaredFields();
-		for (int i = 0, s = fields.length; s > i; i++)
-		{
-			Label label = new Label(fields[i].getName(), skin);
-			label.getColor().mul(new Color(1f, 0.5f, 0.5f, 1f));
-			Node fieldNode = new Node(getFieldActor(component, fields[i]));
-			fieldNode.setObject(fields[i]);
-			
-			nodes.add(fieldNode);
-		}
-		
-		return nodes;
-	}
-	
-	private Table getFieldActor(final Component instance, final Field field)
-	{
-		Table t = new Table(skin);
-		Color color = reflex.isEditable(field)
-			? Color.WHITE
-			: errorColor;
-		
-		Label typeLabel = new Label(field.getType().getSimpleName(), skin);
-		typeLabel.setColor(color);
-		t.add(typeLabel).minWidth(WIDTH_TYPE);
-		
-		Label fieldLabel = new Label(field.getName(), skin);
-		fieldLabel.setColor(color);
-		t.add(fieldLabel).minWidth(WIDTH_LABEL);
-		
-		String value = reflex.on(instance, field).getAsString();
-		if (reflex.isEditable(field))
-		{
-			final TextFieldStyle style = new TextFieldStyle();
-			style.font = skin.getFont("default-font");
-			style.fontColor = Color.WHITE;
-			style.cursor = skin.getDrawable("cursor");
-			TextField textField = new TextField(value, style);
-			textField.addCaptureListener(new InputListener()
-			{
-				@Override
-				public boolean keyDown(InputEvent event, int keycode)
-				{
-					if (keycode == Keys.ESCAPE || keycode == Keys.ENTER)
-					{
-						TextField text = (TextField)event.getListenerActor();
-						
-						boolean success = reflex.on(instance, field).set(text.getText());
-						style.fontColor = (success ? Color.WHITE : errorColor);
-						if (success)
-							text.setText(reflex.on(instance, field).getAsString());
-						
-						entity.changedInWorld();
-					}
-					if (keycode == Keys.ESCAPE)
-					{
-						Stage stage = event.getListenerActor().getStage();
-						stage.setKeyboardFocus(event.getListenerActor().getParent());
-						event.cancel();
-						
-						TextField text = (TextField)event.getListenerActor();
-						text.setText(reflex.on(instance, field).getAsString());
-					}
-					
-					return event.isCancelled();
-				}
-			});
-			textField.addListener(new FocusListener()
-			{
-				@Override
-				public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused)
-				{
-					TextField text = (TextField)event.getListenerActor();
-					text.setText(reflex.on(instance, field).getAsString());
-					
-					boolean success = reflex.on(instance, field).set(text.getText());
-					style.fontColor = (success ? Color.WHITE : errorColor);
-				}
-			});
-			t.add(textField);
-		}
-		else
-		{
-			if (value.length() > 30)
-				value = value.substring(0, 28) + "...";
-			
-			Label valueLabel = new Label(value, skin);
-			valueLabel.setColor(color);
-			t.add(valueLabel).minWidth(WIDTH_VALUE);
-		}
-		
-		return t;
-	}
 	
 	public void toggle()
 	{
 		table.clearActions();
+		float duration = 0.35f;
+		float yTop = table.getStage().getHeight();
+		
 		if (table.isVisible())
-			table.addAction(sequence(fadeOut(0.35f, Interpolation.pow2), visible(false)));
+			table.addAction(sequence(
+				parallel(
+					moveTo(table.getX(), (yTop + table.getHeight()), duration, Interpolation.pow2),
+					fadeOut(duration, Interpolation.pow2)), visible(false)));
 		else
-			table.addAction(sequence(visible(true), fadeIn(0.35f, Interpolation.pow2)));
+			table.addAction(sequence(fadeOut(0), visible(true), moveTo(table.getX(), (yTop + table.getHeight())), 
+				parallel(
+					moveTo(table.getX(), (yTop - table.getHeight()), duration, Interpolation.pow2), 
+					fadeIn(duration, Interpolation.pow2))));
 	}
 	
 	public boolean isVisible()

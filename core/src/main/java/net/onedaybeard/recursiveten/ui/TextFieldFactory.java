@@ -6,13 +6,17 @@ import net.onedaybeard.dominatrix.tuple.Tuple;
 import net.onedaybeard.dominatrix.tuple.Tuple2;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
+import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.ui.LSystemEditorHud.FieldFocusListener;
 import net.onedaybeard.recursiveten.ui.LSystemEditorHud.FieldInputListener;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
@@ -36,15 +40,22 @@ public class TextFieldFactory
 	
 	public void insertProductions(DeterministicLSystem ls)
 	{
-		productionsTable.add(new Label("productions", skin)).align(Align.left);
+		productionsTable.add(new Label("PRODUCTIONS", skin)).align(Align.left).colspan(2);
+		
+		Button addButton = new TextButton("add", skin);
+		productionsTable.add(addButton).width(40).align(Align.right);
+		
 		productionsTable.row();
 		for (int i = 0; ls.productions.length > i; i++)
 		{
 			Tuple2<String,String> production = getProductionTuple(ls.productions[i]);
-			productionsTable.add(new Label(production.a, skin)).expandX().align(Align.right);
+			productionsTable.add(new Label(production.a, skin));
 			
 			TextField textField = new TextField(production.b, getTextFieldStyle());
-			productionsTable.add(textField).expandX().align(Align.right);
+			productionsTable.add(textField).expandX().fillX();
+			
+			Button removeButton = new TextButton("del", skin);
+			productionsTable.add(removeButton).width(40).align(Align.right);
 			
 			productionsTable.row();
 		}
@@ -60,14 +71,22 @@ public class TextFieldFactory
 	
 	public void insertCommands(TurtleProcessor tp)
 	{
-		commandsTable.add(new Label("commands", skin)).align(Align.left);
+		commandsTable.add(new Label("COMMANDS", skin)).align(Align.left).colspan(2);
+		
+		Button addButton = new TextButton("add", skin);
+		commandsTable.add(addButton).width(40).align(Align.right);
+		
 		commandsTable.row();
 		for (int i = 0; tp.commands.length > i; i++)
 		{
-			commandsTable.add(new Label(String.valueOf(tp.commands[i].key), skin)).align(Align.right);
+			commandsTable.add(new Label(String.valueOf(tp.commands[i].key), skin));
 			
-			TextField textField = new TextField(tp.commands[i].command.toString(), getTextFieldStyle());
-			commandsTable.add(textField).expandX().align(Align.right);
+			SelectBox commands = new SelectBox(TurtleCommand.values(), skin);
+			commands.setSelection(tp.commands[i].command.ordinal());
+			commandsTable.add(commands).expandX().fillX();
+			
+			Button removeButton = new TextButton("del", skin);
+			commandsTable.add(removeButton).width(40).align(Align.right);
 			
 			commandsTable.row();
 		}
@@ -78,7 +97,8 @@ public class TextFieldFactory
 		FieldFocusListener fieldFocusListener)
 	{
 		TextField textField = new TextField("", getTextFieldStyle());
-		table.add(textField).expandX().align(Align.right);
+		textField.setRightAligned(true);
+		table.add(textField).expandX().fillX().align(Align.right).padRight(40 + 30);
 		textField.addCaptureListener(fieldInputListener);
 		textField.addListener(fieldFocusListener);
 		return textField;
