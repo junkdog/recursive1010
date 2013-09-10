@@ -7,17 +7,22 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 
 import java.lang.reflect.Field;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.onedaybeard.dominatrix.artemis.ComponentNameComparator;
 import net.onedaybeard.dominatrix.experimental.ui.BackgroundTexture;
 import net.onedaybeard.dominatrix.reflect.ColorWriter;
 import net.onedaybeard.dominatrix.reflect.FieldTypeWriter;
 import net.onedaybeard.dominatrix.reflect.Reflex;
 import net.onedaybeard.dominatrix.reflect.Vector2Writer;
+import net.onedaybeard.recursiveten.component.DeterministicLSystem;
+import net.onedaybeard.recursiveten.component.MaxTextureDimension;
+import net.onedaybeard.recursiveten.component.TurtleProcessor;
+import net.onedaybeard.recursiveten.component.TurtleProcessor.CommandBinding;
 
 import com.artemis.Component;
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
-import com.artemis.utils.Bag;
+import com.artemis.World;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
@@ -34,15 +39,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree.Node;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener.FocusEvent;
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.tablelayout.Cell;
 
 
 public final class LSystemEditorHud
 {
-	private Tree tree;
 	private final Skin skin;
 	@Getter private Entity entity;
 	private Table table;
+	private Table productionsTable;
+	private Table commandsTable;
+	
 	private final Reflex reflex;
 	
 	private final Color errorColor;
@@ -52,8 +61,13 @@ public final class LSystemEditorHud
 	private static final int WIDTH_LABEL = 200;
 	private static final int WIDTH_VALUE = 250;
 	
-
-	public LSystemEditorHud(Skin skin, Stage ui)
+	private final ComponentMapper<MaxTextureDimension> maxTextureDimension;
+	private final ComponentMapper<DeterministicLSystem> lsystemMapper;
+	private final ComponentMapper<TurtleProcessor> tutrteProcessorMapper;
+	
+	private final TextFieldFactory textFieldFactory;
+	
+	public LSystemEditorHud(Skin skin, Stage ui, World world)
 	{
 		this.skin = skin;
 		
@@ -65,6 +79,13 @@ public final class LSystemEditorHud
 		
 		initUi(ui, skin);
 		ui.addActor(table);
+		
+		lsystemMapper = world.getMapper(DeterministicLSystem.class);
+		maxTextureDimension = world.getMapper(MaxTextureDimension.class);
+		tutrteProcessorMapper = world.getMapper(TurtleProcessor.class);
+		
+		textFieldFactory = new TextFieldFactory(table, productionsTable, commandsTable, skin, reflex);
+		
 	}
 	
 	public void addParser(FieldTypeWriter fieldTypeWriter)
@@ -74,12 +95,20 @@ public final class LSystemEditorHud
 	
 	private void initUi(Stage ui, Skin skin)
 	{
-		tree = new Tree(skin);
 		table = new Table();
 		table.setBackground(BackgroundTexture.getDrawable());
 		table.defaults().pad(PADDING);
-		table.add(tree);
 		table.align(Align.top | Align.left);
+		
+		productionsTable = new Table();
+		productionsTable.setBackground(BackgroundTexture.getDrawable());
+		productionsTable.defaults().pad(PADDING);
+		productionsTable.align(Align.top | Align.left);
+		
+		commandsTable = new Table();
+		commandsTable.setBackground(BackgroundTexture.getDrawable());
+		commandsTable.defaults().pad(PADDING);
+		commandsTable.align(Align.top | Align.left);
 		
 		table.setVisible(false);
 	}
@@ -89,20 +118,135 @@ public final class LSystemEditorHud
 		if (e == entity)
 			return;
 		
-		tree.clearChildren();
+		table.clear();
+		productionsTable.clear();
+		commandsTable.clear();
+//		tree.clearChildren();
 		this.entity = e;
 		
 		if (e == null)
 			return;
 		
-		Bag<Component> components = e.getComponents(new Bag<Component>());
-		components.sort(new ComponentNameComparator());
-		for (int i = 0, s = components.size(); s > i; i++)
-		{
-			tree.add(getComponentNode(components.get(i)));
-		}
+		DeterministicLSystem ls = lsystemMapper.get(e);
+		table.add(new Label("L-SYSTEM", skin)).expandX().align(Align.left).maxWidth(300);
+		table.row();
+//		table.add(new Label("axiom:", skin)).align(Align.right);
+		insertField(ls, "iteration");
+		insertField(ls, "axiom");
+		textFieldFactory.insertProductions(ls);
+		
+		table.row();
+		
+		TurtleProcessor processor = tutrteProcessorMapper.get(e);
+		table.add(new Label("TURTLE", skin)).expandX().align(Align.left);
+		table.row();
+		insertField(processor, "turnAmount");
+		textFieldFactory.insertCommands(processor);
+		
+		
+//		addHeader("L-SYSTEM", ls);
+//		Node lsystem = createHeader("L-SYSTEM", ls);
+//		createSubHeader(lsystem, "axiom");
+//		createSubHeader(lsystem, "iterations");
+//		Node productions = createSubHeader(lsystem, "productions");
+//		for (String production : ls.productions)
+//		{
+//			createSubHeader(productions, production);
+//		}
+		
+//		Node turtle = createHeader("TURTLE", processor);
+//		createSubHeader(turtle, "turnAmount");
+//		Node commands = createSubHeader(turtle, "commands");
+//		for (CommandBinding command : processor.commands)
+//		{
+//			createSubHeader(commands, command.toString());
+//		}
 		
 		packTable();
+//		tree.expandAll();
+	}
+
+	private void insertField(Component component, String label)
+	{
+		textFieldFactory.insertField(label,
+			new FieldInputListener(component, label),
+			new FieldFocusListener(component, label));
+	}
+	
+	public void drawDebug()
+	{
+		table.debug();
+		productionsTable.debug();
+		commandsTable.debug();
+	}
+
+	private Cell addField(final Object instance, final Field field)
+	{
+		String value = reflex.on(instance, field).getAsString();
+		if (reflex.isEditable(field))
+		{
+			final TextFieldStyle style = new TextFieldStyle();
+			style.font = skin.getFont("default-font");
+			style.fontColor = Color.WHITE;
+			style.cursor = skin.getDrawable("cursor");
+			
+			TextField textField = new TextField(value, style);
+			textField.addCaptureListener(new InputListener()
+			{
+				@Override
+				public boolean keyDown(InputEvent event, int keycode)
+				{
+					if (keycode == Keys.ESCAPE || keycode == Keys.ENTER)
+					{
+						TextField text = (TextField)event.getListenerActor();
+						
+						boolean success = reflex.on(instance, field).set(text.getText());
+						style.fontColor = (success ? Color.WHITE : errorColor);
+						if (success)
+							text.setText(reflex.on(instance, field).getAsString());
+						
+						entity.changedInWorld();
+					}
+					if (keycode == Keys.ESCAPE)
+					{
+						Stage stage = event.getListenerActor().getStage();
+						stage.setKeyboardFocus(event.getListenerActor().getParent());
+						event.cancel();
+						
+						TextField text = (TextField)event.getListenerActor();
+						text.setText(reflex.on(instance, field).getAsString());
+					}
+					
+					return event.isCancelled();
+				}
+			});
+			textField.addListener(new FocusListener()
+			{
+				@Override
+				public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused)
+				{
+					TextField text = (TextField)event.getListenerActor();
+					text.setText(reflex.on(instance, field).getAsString());
+					
+					boolean success = reflex.on(instance, field).set(text.getText());
+					style.fontColor = (success ? Color.WHITE : errorColor);
+				}
+			});
+			table.add(textField);
+		}
+		
+		return null;
+	}
+	
+	private void addHeader(String string, DeterministicLSystem ls)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void addField(String label, String field)
+	{
+//		new Field
 	}
 
 	private void packTable()
@@ -118,16 +262,6 @@ public final class LSystemEditorHud
 		float y = stage.getHeight() - 5 - table.getHeight();
 		
 		table.setPosition(x, y);
-	}
-	
-	
-	private Node getComponentNode(Component component)
-	{
-		Label label = new Label(component.getClass().getSimpleName(), skin);
-		Node componentNode = new Tree.Node(label);
-		componentNode.setObject(component);
-		componentNode.addAll(getFieldNodes(component));
-		return componentNode;
 	}
 	
 	private Array<Node> getFieldNodes(Component component)
@@ -244,5 +378,60 @@ public final class LSystemEditorHud
 	{
 		if (table.isVisible() != visible)
 			toggle();
+	}
+
+	@AllArgsConstructor
+	class FieldInputListener extends InputListener
+	{
+		@Getter private final Object instance;
+		private final String field;
+
+		@Override
+		public boolean keyDown(InputEvent event, int keycode)
+		{
+			if (keycode == Keys.ESCAPE || keycode == Keys.ENTER)
+			{
+				TextField text = (TextField)event.getListenerActor();
+				
+				boolean success = reflex.on(instance, field).set(text.getText());
+				text.getStyle().fontColor = (success ? Color.WHITE : errorColor);
+				if (success)
+					text.setText(reflex.on(instance, field).getAsString());
+				
+				entity.changedInWorld();
+				lsystemMapper.get(entity).requestUpdate = true;
+			}
+			if (keycode == Keys.ESCAPE)
+			{
+				Stage stage = event.getListenerActor().getStage();
+				stage.setKeyboardFocus(event.getListenerActor().getParent());
+				event.cancel();
+				
+				TextField text = (TextField)event.getListenerActor();
+				text.setText(reflex.on(instance, field).getAsString());
+				lsystemMapper.get(entity).requestUpdate = true;
+			}
+			
+			return event.isCancelled();
+		}
+	}
+	
+	
+	@AllArgsConstructor
+	final class FieldFocusListener extends FocusListener
+	{
+		private final Object instance;
+		private final String field;
+		
+		@Override
+		public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused)
+		{
+			TextField text = (TextField)event.getListenerActor();
+			text.setText(reflex.on(instance, field).getAsString());
+
+			boolean success = reflex.on(instance, field).set(text.getText());
+			text.getStyle().fontColor = (success ? Color.WHITE : errorColor);
+			lsystemMapper.get(entity).requestUpdate = true;
+		}
 	}
 }

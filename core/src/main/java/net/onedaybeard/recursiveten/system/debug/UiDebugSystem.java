@@ -38,7 +38,6 @@ import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.Component;
 import com.artemis.Entity;
-import com.artemis.managers.GroupManager;
 import com.artemis.systems.VoidEntitySystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -46,6 +45,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
@@ -108,7 +108,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 				setEntity(world.getEntity(entityId));
 			}
 		});
-		lsystemHud = new LSystemEditorHud(skin, stage);
+		lsystemHud = new LSystemEditorHud(skin, stage, world);
 		
 		inspectorHud.setVisible(true);
 		initInput();
@@ -162,6 +162,9 @@ public final class UiDebugSystem extends VoidEntitySystem
 	{
 		stage.act();
 		stage.draw();
+		
+		lsystemHud.drawDebug();
+		Table.drawDebug(stage);
 	}
 
 	protected class Shortcuts implements CommandController
@@ -272,7 +275,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 			}
 		}
 		
-		@Command(name="delete selected (entity)", bindings=@Shortcut({Keys.DEL}))
+		@Command(name="delete selected (entity)", bindings=@Shortcut({Keys.CONTROL_LEFT, Keys.D}))
 		public void deleteSelectedEntity()
 		{
 			if (reflexHud.getEntity() != null)

@@ -26,10 +26,19 @@ public class TurtleProcessor extends Component
 		return this;
 	}
 	
-	@AllArgsConstructor @NoArgsConstructor
+	@AllArgsConstructor @NoArgsConstructor @ToString
 	public static class CommandBinding
 	{
 		public char key;
 		public TurtleCommand command;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "TurtleProcessor(commands:types=" + commands.length + ", moveAmount=" + moveAmount +
+			", turnAmount=" + turnAmount + ", turnDeviation=" + turnDeviation + ")";
+	}
+	
+	
 }
