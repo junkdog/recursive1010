@@ -40,8 +40,6 @@ public final class LSystemEditorHud
 	private final Skin skin;
 	@Getter private Entity entity;
 	private Table table;
-//	private Table productionsTable;
-//	private Table commandsTable;
 	
 	private final Reflex reflex;
 	
@@ -107,10 +105,8 @@ public final class LSystemEditorHud
 		DeterministicLSystem ls = lsystemMapper.get(e);
 		table.add(new Label("L-SYSTEM", skin)).expandX().align(Align.left).maxWidth(300);
 		table.row();
-//		table.add(new Label("axiom:", skin)).align(Align.right);
 		insertField(ls, "iteration");
 		insertField(ls, "axiom");
-//		textFieldFactory.insertProductions(ls);
 		table.add(productionsEditor.insertProductions(ls)).colspan(2).expandX().fillX();
 		
 		table.row();
@@ -122,6 +118,8 @@ public final class LSystemEditorHud
 		table.add(commandsEditor.insertCommands(processor)).colspan(2).fillX().expandX();
 		
 		packTable();
+		
+		productionsEditor.update(ls);
 	}
 
 	private void insertField(Component component, String label)

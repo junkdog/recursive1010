@@ -1,5 +1,6 @@
 package net.onedaybeard.recursiveten.ui.lsystem;
 
+import static net.onedaybeard.recursiveten.ui.UiUtil.BUTTON_WIDTH;
 import static net.onedaybeard.recursiveten.ui.UiUtil.getTextFieldStyle;
 import lombok.AllArgsConstructor;
 import net.onedaybeard.dominatrix.reflect.Reflex;
@@ -15,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 @AllArgsConstructor
 public class TextFieldFactory
 {
-	private static final int BUTTON_WIDTH = 40;
 	private final Table table;
 	private final Skin skin;
 	private final Reflex reflex;

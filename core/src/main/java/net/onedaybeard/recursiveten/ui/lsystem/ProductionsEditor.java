@@ -2,6 +2,10 @@ package net.onedaybeard.recursiveten.ui.lsystem;
 
 import static net.onedaybeard.recursiveten.ui.UiUtil.BUTTON_WIDTH;
 import static net.onedaybeard.recursiveten.ui.UiUtil.getTextFieldStyle;
+
+import java.util.Arrays;
+import java.util.List;
+
 import net.onedaybeard.dominatrix.tuple.Tuple;
 import net.onedaybeard.dominatrix.tuple.Tuple2;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
@@ -17,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.esotericsoftware.tablelayout.Cell;
 
 public class ProductionsEditor
 {
@@ -60,6 +65,16 @@ public class ProductionsEditor
 			table.row();
 		}
 		return table;
+	}
+	
+	void update(DeterministicLSystem ls)
+	{
+		List<Cell> cells = table.getCells();
+		System.out.println(Arrays.toString(ls.productions));
+		for (int i = 0, s = cells.size(); s > i; i++)
+		{
+			System.out.println(cells.get(i).getWidget());
+		}
 	}
 	
 	private Tuple2<String,String> productionTuple(String production)
