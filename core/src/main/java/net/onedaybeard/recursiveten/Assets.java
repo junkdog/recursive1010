@@ -31,7 +31,6 @@ public final class Assets
 		
 		Assets.assetManager = new AssetManager(fileResolver);
 //		assetManager.load("uiskin.json", Skin.class);
-		assetManager.load("gfx/ui/uiskin.json", Skin.class);
 //		for (Resource res : TextureMap.Resource.values())
 //			assetManager.load(res.getRes(), Texture.class);
 //		TextureMap.loadAssetManager(assetManager);
@@ -41,6 +40,7 @@ public final class Assets
 //		loadManagedResources(FontResource.MONO);
 		for (ResourceAsset asset : ResourceAsset.values())
 			assetManager.load(asset.path, asset.type);
+		assetManager.load("gfx/ui/uiskin.json", Skin.class);
 		assetManager.finishLoading();
 	}
 	

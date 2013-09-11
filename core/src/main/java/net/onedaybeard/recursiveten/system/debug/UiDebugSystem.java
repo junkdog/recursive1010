@@ -33,7 +33,7 @@ import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.profile.Profiler;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
-import net.onedaybeard.recursiveten.ui.LSystemEditorHud;
+import net.onedaybeard.recursiveten.ui.lsystem.LSystemEditorHud;
 import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.Component;

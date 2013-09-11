@@ -1,4 +1,4 @@
-package net.onedaybeard.recursiveten.ui;
+package net.onedaybeard.recursiveten.ui.lsystem;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
@@ -8,13 +8,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.visible;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.onedaybeard.dominatrix.experimental.ui.BackgroundTexture;
 import net.onedaybeard.dominatrix.reflect.ColorWriter;
 import net.onedaybeard.dominatrix.reflect.FieldTypeWriter;
 import net.onedaybeard.dominatrix.reflect.Reflex;
 import net.onedaybeard.dominatrix.reflect.Vector2Writer;
 import net.onedaybeard.recursiveten.component.DeterministicLSystem;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
+import net.onedaybeard.recursiveten.ui.UiUtil;
 
 import com.artemis.Component;
 import com.artemis.ComponentMapper;
@@ -40,8 +40,8 @@ public final class LSystemEditorHud
 	private final Skin skin;
 	@Getter private Entity entity;
 	private Table table;
-	private Table productionsTable;
-	private Table commandsTable;
+//	private Table productionsTable;
+//	private Table commandsTable;
 	
 	private final Reflex reflex;
 	
@@ -55,6 +55,8 @@ public final class LSystemEditorHud
 	private final ComponentMapper<TurtleProcessor> turtleProcessorMapper;
 	
 	private final TextFieldFactory textFieldFactory;
+	private ProductionsEditor productionsEditor;
+	private CommandsEditor commandsEditor;
 	
 	public LSystemEditorHud(Skin skin, Stage ui, World world)
 	{
@@ -72,7 +74,7 @@ public final class LSystemEditorHud
 		lsystemMapper = world.getMapper(DeterministicLSystem.class);
 		turtleProcessorMapper = world.getMapper(TurtleProcessor.class);
 		
-		textFieldFactory = new TextFieldFactory(table, productionsTable, commandsTable, skin, reflex);
+		textFieldFactory = new TextFieldFactory(table, skin, reflex);
 		
 	}
 	
@@ -83,20 +85,10 @@ public final class LSystemEditorHud
 	
 	private void initUi(Stage ui, Skin skin)
 	{
-		table = new Table();
-		table.setBackground(BackgroundTexture.getDrawable());
-		table.defaults().pad(PADDING);
-		table.align(Align.top | Align.left);
+		table = UiUtil.createTable(skin);
 		
-		productionsTable = new Table();
-		productionsTable.setBackground(BackgroundTexture.getDrawable());
-		productionsTable.defaults().pad(PADDING);
-		productionsTable.align(Align.top | Align.left);
-		
-		commandsTable = new Table();
-		commandsTable.setBackground(BackgroundTexture.getDrawable());
-		commandsTable.defaults().pad(PADDING);
-		commandsTable.align(Align.top | Align.left);
+		productionsEditor = new ProductionsEditor(skin);
+		commandsEditor = new CommandsEditor(skin);
 		
 		table.setVisible(false);
 	}
@@ -107,8 +99,6 @@ public final class LSystemEditorHud
 			return;
 		
 		table.clear();
-		productionsTable.clear();
-		commandsTable.clear();
 		this.entity = e;
 		
 		if (e == null)
@@ -120,7 +110,8 @@ public final class LSystemEditorHud
 //		table.add(new Label("axiom:", skin)).align(Align.right);
 		insertField(ls, "iteration");
 		insertField(ls, "axiom");
-		textFieldFactory.insertProductions(ls);
+//		textFieldFactory.insertProductions(ls);
+		table.add(productionsEditor.insertProductions(ls)).colspan(2).expandX().fillX();
 		
 		table.row();
 		
@@ -128,8 +119,7 @@ public final class LSystemEditorHud
 		table.add(new Label("TURTLE", skin)).expandX().align(Align.left);
 		table.row();
 		insertField(processor, "turnAmount");
-		textFieldFactory.insertCommands(processor);
-		
+		table.add(commandsEditor.insertCommands(processor)).colspan(2).fillX().expandX();
 		
 		packTable();
 	}
@@ -144,8 +134,8 @@ public final class LSystemEditorHud
 	public void drawDebug()
 	{
 		table.debug();
-		productionsTable.debug();
-		commandsTable.debug();
+		productionsEditor.debug();
+		commandsEditor.debug();
 	}
 
 	private void packTable()
