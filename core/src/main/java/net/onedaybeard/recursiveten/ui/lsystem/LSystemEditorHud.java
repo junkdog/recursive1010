@@ -147,9 +147,9 @@ public final class LSystemEditorHud
 		System.out.println("pref height: " + table.getPrefHeight());
 		
 		float x = (stage.getWidth() - table.getWidth()) / 2;
-		float y = stage.getHeight() - 5 - table.getHeight();
+		float y = stage.getHeight() - table.getHeight();
 		
-		table.setPosition(x, y);
+		table.setPosition(stage.getWidth(), y);
 	}
 	
 	
@@ -157,17 +157,17 @@ public final class LSystemEditorHud
 	{
 		table.clearActions();
 		float duration = 0.35f;
-		float yTop = table.getStage().getHeight();
+		float width = table.getStage().getWidth();
 		
 		if (table.isVisible())
 			table.addAction(sequence(
 				parallel(
-					moveTo(table.getX(), (yTop + table.getHeight()), duration, Interpolation.pow2),
+					moveTo(width, table.getY(), duration, Interpolation.pow2),
 					fadeOut(duration, Interpolation.pow2)), visible(false)));
 		else
-			table.addAction(sequence(fadeOut(0), visible(true), moveTo(table.getX(), (yTop + table.getHeight())), 
+			table.addAction(sequence(fadeOut(0), visible(true), moveTo(width, table.getY()), 
 				parallel(
-					moveTo(table.getX(), (yTop - table.getHeight()), duration, Interpolation.pow2), 
+					moveTo((width - table.getWidth()), table.getY(), duration, Interpolation.pow2), 
 					fadeIn(duration, Interpolation.pow2))));
 	}
 	

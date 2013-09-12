@@ -12,6 +12,7 @@ import net.onedaybeard.recursiveten.component.DeterministicLSystem;
 import net.onedaybeard.recursiveten.ui.UiUtil;
 
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -69,6 +70,7 @@ public class ProductionsEditor
 	
 	void update(DeterministicLSystem ls)
 	{
+		@SuppressWarnings("rawtypes")
 		List<Cell> cells = table.getCells();
 		System.out.println(Arrays.toString(ls.productions));
 		for (int i = 0, s = cells.size(); s > i; i++)
