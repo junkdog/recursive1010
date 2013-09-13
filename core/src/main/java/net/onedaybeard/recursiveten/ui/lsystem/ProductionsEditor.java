@@ -63,12 +63,14 @@ public class ProductionsEditor
 	{
 		TextField prerequisiteField = new TextField(production.a, getTextFieldStyle(skin));
 		prerequisiteField.setRightAligned(true);
+		prerequisiteField.setTextFieldListener(new LSystemAlphabetListener());
 		table.add(prerequisiteField);
 		
 		table.add(new Label("=", skin));
 		
 		TextField ruleField = new TextField(production.b, getTextFieldStyle(skin));
 		table.add(ruleField).expandX().fillX();
+		
 		
 		final Button removeButton = new TextButton("del", skin);
 		removeButton.addCaptureListener(new ClickListener(Buttons.LEFT)

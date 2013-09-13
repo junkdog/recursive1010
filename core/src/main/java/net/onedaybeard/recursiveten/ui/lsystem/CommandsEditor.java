@@ -1,6 +1,8 @@
 package net.onedaybeard.recursiveten.ui.lsystem;
 
 import static net.onedaybeard.recursiveten.ui.UiUtil.BUTTON_WIDTH;
+import static net.onedaybeard.recursiveten.ui.UiUtil.getTextFieldStyle;
+import net.onedaybeard.dominatrix.tuple.Tuple2;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
 import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.ui.UiUtil;
@@ -11,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 
 public class CommandsEditor
@@ -35,7 +38,10 @@ public class CommandsEditor
 		table.row();
 		for (int i = 0; tp.commands.length > i; i++)
 		{
-			table.add(new Label(String.valueOf(tp.commands[i].key), skin));
+			TextField alphabetField = new TextField(Character.toString(tp.commands[i].key), getTextFieldStyle(skin));
+			alphabetField.setRightAligned(true);
+			alphabetField.setTextFieldListener(new LSystemAlphabetListener());
+			table.add(alphabetField);
 			
 			SelectBox commands = new SelectBox(TurtleCommand.values(), skin);
 			commands.setSelection(tp.commands[i].command.ordinal());
