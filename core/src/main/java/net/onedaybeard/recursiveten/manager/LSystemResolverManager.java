@@ -94,11 +94,12 @@ public class LSystemResolverManager extends Manager
 	{
 		turtle.reset();
 		for (int i = 0; commands.length > i; i++)
-		{
 			interpreter.execute(parseCommand(commands[i], processor.commands), processor);
-		}
 		
 		Rectangle turtleSize = turtle.getSize();
+		if (max > 0 && turtleSize.width == 0 && turtleSize.height == 0)
+			return;
+		
 		System.out.println(turtleSize);
 		
 		float dim = Math.max(turtleSize.width, turtleSize.height);
@@ -170,16 +171,5 @@ public class LSystemResolverManager extends Manager
 			}
 			eventSystem.send(CommandEvent.Type.CHANGE_ITERATION_COUNT, -1);
 		}
-		
-		@Command(name="recalculate lsystems", bindings=@Shortcut(Keys.F10))
-		public void recalculateLSystems()
-		{
-			for (Entity e : entities)
-			{
-				deterministicLSystemMapper.get(e).requestUpdate = true;
-				e.changedInWorld();
-			}
-		}
-		
 	}
 }

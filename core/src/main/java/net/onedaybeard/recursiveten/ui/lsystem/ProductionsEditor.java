@@ -28,7 +28,8 @@ public class ProductionsEditor
 {
 	private final Table table;
 	private final Skin skin;
-	private DeterministicLSystem ls;
+	
+//	private DeterministicLSystem ls;
 	
 	ProductionsEditor(Skin skin)
 	{
@@ -36,8 +37,10 @@ public class ProductionsEditor
 		table = UiUtil.createTable(skin);
 	}
 	
-	Table insertProductions(DeterministicLSystem ls)
+	Table insertProductions(String[] productions)
 	{
+//		this.ls = ls;
+		
 		table.clear();
 		table.add(new Label("PRODUCTIONS", skin)).align(Align.left).colspan(3);
 		
@@ -48,13 +51,14 @@ public class ProductionsEditor
 			public void clicked(InputEvent event, float x, float y)
 			{
 				addRow(Tuple.create("", ""));
+				event.handle();
 			}
 		});
 		table.add(addButton).width(BUTTON_WIDTH).align(Align.right);
 		
 		table.row();
-		for (int i = 0; ls.productions.length > i; i++)
-			addRow(productionTuple(ls.productions[i]));
+		for (int i = 0; productions.length > i; i++)
+			addRow(productionTuple(productions[i]));
 		
 		return table;
 	}
@@ -78,14 +82,15 @@ public class ProductionsEditor
 			@Override
 			public void clicked(InputEvent event, float x, float y)
 			{
-				ls.productions = getProductions();
+				String[] productions = getProductions();
+//				ls.productions = getProductions();
 				int index = table.getCells().indexOf(table.getCell(removeButton));
 				index -= 2 - 3; // global offset plus local
-				List<String> productions = new ArrayList<String>(Arrays.asList(getProductions()));
+				List<String> productionsList = new ArrayList<String>(Arrays.asList(getProductions()));
 				assert index % 4 == 0;
-				productions.remove(index / 4 - 1);
-				ls.productions = productions.toArray(new String[0]);
-				insertProductions(ls);
+				productionsList.remove(index / 4 - 1);
+				productions = productionsList.toArray(new String[0]);
+				insertProductions(productions);
 			}
 		});
 		table.add(removeButton).width(BUTTON_WIDTH).align(Align.right);
@@ -95,18 +100,10 @@ public class ProductionsEditor
 	
 	void update(DeterministicLSystem ls)
 	{
-		this.ls = ls;
-		
-		@SuppressWarnings("rawtypes")
-		List<Cell> cells = table.getCells();
-		System.out.println(Arrays.toString(ls.productions));
-		for (int i = 0, s = cells.size(); s > i; i++)
-		{
-			System.out.println(i + ": " + cells.get(i).getWidget());
-		}
+		ls.productions = getProductions();
 	}
 	
-	String[] getProductions()
+	private String[] getProductions()
 	{
 		@SuppressWarnings("rawtypes")
 		List<Cell> cells = table.getCells();
@@ -120,6 +117,8 @@ public class ProductionsEditor
 			TextField productionField = (TextField)cells.get(index + 2).getWidget();
 			productions[i] = ruleField.getText().trim() + "=" + productionField.getText().trim();
 		}
+		
+		System.out.println("assembled productions: " + productions.length);
 		return productions;
 	}
 	

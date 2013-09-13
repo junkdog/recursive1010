@@ -107,7 +107,7 @@ public final class LSystemEditorHud
 		table.row();
 		insertField(ls, "iteration");
 		insertField(ls, "axiom");
-		table.add(productionsEditor.insertProductions(ls)).colspan(2).expandX().fillX();
+		table.add(productionsEditor.insertProductions(ls.productions)).colspan(2).expandX().fillX();
 		
 		table.row();
 		
@@ -115,11 +115,9 @@ public final class LSystemEditorHud
 		table.add(new Label("TURTLE", skin)).expandX().align(Align.left);
 		table.row();
 		insertField(processor, "turnAmount");
-		table.add(commandsEditor.insertCommands(processor)).colspan(2).fillX().expandX();
+		table.add(commandsEditor.insertCommands(processor.commands)).colspan(2).fillX().expandX();
 		
 		packTable();
-		
-		productionsEditor.update(ls);
 	}
 
 	private void insertField(Component component, String label)
@@ -180,6 +178,17 @@ public final class LSystemEditorHud
 	{
 		if (table.isVisible() != visible)
 			toggle();
+	}
+	
+	public void updateEntity()
+	{
+		if (entity == null)
+			return;
+		
+		productionsEditor.update(lsystemMapper.get(entity));
+		commandsEditor.update(turtleProcessorMapper.get(entity));
+		lsystemMapper.get(entity).requestUpdate = true;
+		entity.changedInWorld();
 	}
 
 	@AllArgsConstructor

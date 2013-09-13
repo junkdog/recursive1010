@@ -45,7 +45,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
@@ -228,6 +227,12 @@ public final class UiDebugSystem extends VoidEntitySystem
 		public void toggleLSystemEditor()
 		{
 			lsystemHud.toggle();
+		}
+		
+		@Command(name="recalculate lsystems", bindings=@Shortcut(Keys.F10))
+		public void recalculateLSystems()
+		{
+			lsystemHud.updateEntity();
 		}
 		
 		@Command(name="copy json (entity)", bindings=@Shortcut({Keys.CONTROL_LEFT, Keys.C}))
