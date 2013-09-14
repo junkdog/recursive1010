@@ -144,7 +144,6 @@ public final class LSystemEditorHud
 		table.setHeight(table.getPrefHeight());
 		System.out.println("pref height: " + table.getPrefHeight());
 		
-		float x = (stage.getWidth() - table.getWidth()) / 2;
 		float y = stage.getHeight() - table.getHeight();
 		
 		table.setPosition(stage.getWidth(), y);
@@ -209,8 +208,7 @@ public final class LSystemEditorHud
 				if (success)
 					text.setText(reflex.on(instance, field).getAsString());
 				
-				entity.changedInWorld();
-				lsystemMapper.get(entity).requestUpdate = true;
+				updateEntity();
 			}
 			if (keycode == Keys.ESCAPE)
 			{
@@ -242,7 +240,7 @@ public final class LSystemEditorHud
 
 			boolean success = reflex.on(instance, field).set(text.getText());
 			text.getStyle().fontColor = (success ? Color.WHITE : errorColor);
-			lsystemMapper.get(entity).requestUpdate = true;
+			updateEntity();
 		}
 	}
 }

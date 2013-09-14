@@ -71,6 +71,8 @@ public class LSystemResolverManager extends Manager
 		if (!ls.requestUpdate)
 			return;
 		
+		ls.iteration = Math.max(0, ls.iteration);
+		
 		LSystem lSystem = LSystemUtil.toLSystem(ls);
 		ls.result = lSystem.getIteration(ls.iteration).toCharArray();
 		
