@@ -168,7 +168,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 
 	protected class Shortcuts implements CommandController
 	{
-		@Command(name="quit/close component window", bindings=@Shortcut(Keys.ESCAPE))
+		@Command(name="quit/close component window", bindings=@Shortcut({Keys.CONTROL_LEFT, Keys.Q}))
 		public void exit()
 		{
 			if (componentsHud.isVisible())

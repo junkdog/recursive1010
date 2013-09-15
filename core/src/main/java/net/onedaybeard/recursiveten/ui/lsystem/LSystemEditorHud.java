@@ -127,7 +127,7 @@ public final class LSystemEditorHud
 			new FieldFocusListener(component, label));
 	}
 	
-	public void drawDebug()
+	public void enableDebug()
 	{
 		table.debug();
 		productionsEditor.debug();

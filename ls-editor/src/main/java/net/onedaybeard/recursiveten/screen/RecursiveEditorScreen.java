@@ -92,7 +92,8 @@ public class RecursiveEditorScreen implements Screen
 	private void initializeEntities(World world)
 	{
 		entityFactory.create("BACKGROUND");
-		entityFactory.create("LS_DRAGON");
+//		entityFactory.create("LS_DRAGON");
+		entityFactory.create("LS_KOCH_STAR");
 //		entityFactory.create("LS_BUSH");
 //		entityFactory.create("LS_TREE");
 //		Entity e = entityFactory.create("LS_TREE");
