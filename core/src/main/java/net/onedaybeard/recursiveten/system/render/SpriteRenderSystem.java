@@ -8,14 +8,9 @@ import net.onedaybeard.recursiveten.profile.Profiler;
 
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.postprocessing.effects.Bloom;
-import com.bitfire.utils.ShaderLoader;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(

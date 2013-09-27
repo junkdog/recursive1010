@@ -27,6 +27,7 @@
 			"Position": {
 				"pos": { "x": 1, "y": 1 }
 			},
+			"ShaderPainted": {},
 			"Size": {},
 			"TurtleProcessor": {
 				"moveAmount": 2,
@@ -56,6 +57,7 @@
 			"Position": {
 				"pos": { "x": 0, "y": 0 }
 			},
+			"ShaderPainted": {},
 			"Size": {},
 			"TurtleProcessor": {
 				"moveAmount": 3,
@@ -84,6 +86,7 @@
 			"Position": {
 				"pos": { "x": 256, "y": 0 }
 			},
+			"ShaderPainted": {},
 			"Size": {},
 			"TurtleProcessor": {
 				"moveAmount": 5,
@@ -116,6 +119,7 @@
 			"Position": {
 				"pos": { "x": 256 }
 			},
+			"ShaderPainted": {},
 			"Size": {},
 			"TurtleProcessor": {
 				"commands": [
@@ -138,11 +142,12 @@
 				"productions": [ "F=FF", "X=F[-X]++F++F[X+]++F", "S=FF-F+FF" ],
 				"iteration": 4
 			},
-			"JsonKey": { "name": "LS_KOCH_STAR" },
+			"JsonKey": { "name": "LS_BOX" },
 			"MaxTextureDimension": { "value": 768 },
 			"Position": {
 				"pos": { "x": 256 }
 			},
+			"ShaderPainted": {},
 			"Size": {},
 			"TurtleProcessor": {
 				"commands": [

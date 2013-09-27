@@ -4,11 +4,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import lombok.ArtemisManager;
+import lombok.Getter;
 import net.onedaybeard.recursiveten.component.Shader;
 
 import com.artemis.Entity;
 import com.artemis.Manager;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.utils.IdentityMap;
+import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.CameraMotion;
@@ -22,7 +26,8 @@ import com.bitfire.postprocessing.effects.Zoomer;
 	requires=Shader.class)
 public class ShaderLoader extends Manager
 {
-	private final IdentityMap<Class<? extends EffectSettings>, Class<? extends PostProcessorEffect<?>>> effectsMap; 
+	private final IdentityMap<Class<? extends EffectSettings>, Class<? extends PostProcessorEffect<?>>> effectsMap;
+	@Getter private final PostProcessor postProcessor; 
 	
 	public ShaderLoader()
 	{
@@ -33,6 +38,9 @@ public class ShaderLoader extends Manager
 		effectsMap.put(Curvature.Settings.class, Curvature.class);
 		effectsMap.put(Vignette.Settings.class, Vignette.class);
 		effectsMap.put(Zoomer.Settings.class, Zoomer.class);
+		
+		postProcessor = new PostProcessor(false, false, (Gdx.app.getType() == ApplicationType.Desktop));
+		com.bitfire.utils.ShaderLoader.BasePath = "shaders/";
 	}
 	
 	@Override
@@ -47,6 +55,7 @@ public class ShaderLoader extends Manager
 		{
 			Constructor<? extends PostProcessorEffect> constructor = klazz.getConstructor(shader.settings.getClass());
 			shader.effect = constructor.newInstance(shader.settings);
+			postProcessor.addEffect(shader.effect);
 		}
 		catch (NoSuchMethodException e1)
 		{
@@ -72,5 +81,13 @@ public class ShaderLoader extends Manager
 		{
 			e1.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void deleted(Entity e)
+	{
+		Shader shader = shaderMapper.get(e);
+		postProcessor.removeEffect(shader.effect);
+		shader.effect.dispose();
 	}
 }

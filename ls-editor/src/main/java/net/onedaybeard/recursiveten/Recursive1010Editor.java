@@ -1,7 +1,6 @@
 package net.onedaybeard.recursiveten;
 
 import net.onedaybeard.recursiveten.screen.RecursiveEditorScreen;
-import net.onedaybeard.recursiveten.screen.RecursiveGameScreen;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;

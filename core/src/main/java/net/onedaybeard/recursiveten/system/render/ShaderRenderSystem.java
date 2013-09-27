@@ -4,45 +4,41 @@ import lombok.ArtemisSystem;
 import lombok.Profile;
 import net.onedaybeard.recursiveten.component.Cullable;
 import net.onedaybeard.recursiveten.component.Renderable;
+import net.onedaybeard.recursiveten.component.ShaderPainted;
+import net.onedaybeard.recursiveten.manager.ShaderLoader;
 import net.onedaybeard.recursiveten.profile.Profiler;
 
 import com.artemis.Entity;
 import com.artemis.systems.EntityProcessingSystem;
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.postprocessing.effects.Bloom;
-import com.bitfire.utils.ShaderLoader;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
-	requires={Renderable.class, Cullable.class})
+	requires={Renderable.class, Cullable.class, ShaderPainted.class},
+	managers=ShaderLoader.class)
 public final class ShaderRenderSystem extends EntityProcessingSystem
 {
-	private SpriteBatch batch;
-	private OrthographicCamera camera;
+	private final SpriteBatch batch;
+	private final OrthographicCamera camera;
 	
 	private PostProcessor postProcessor;
-	private Bloom bloom;
 
 	public ShaderRenderSystem(SpriteBatch batch, OrthographicCamera camera)
 	{
 		super(null);
 		this.batch = batch;
 		this.camera = camera;
-		
-		ShaderLoader.BasePath = "shaders/";
-		postProcessor = new PostProcessor(false, false, (Gdx.app.getType() == ApplicationType.Desktop));
-		bloom = new Bloom((int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f));
-//		bloom.setBaseIntesity(bloom.getBaseIntensity() * 2);
-//		bloom.setBloomIntensity(bloom.getBaseIntensity() * 2);
-		bloom.setBlurAmount(bloom.getBlurAmount() * 2);
-		postProcessor.addEffect(bloom);
 	}
 
+	@Override
+	protected void initialize()
+	{
+		postProcessor = shaderLoader.getPostProcessor();
+	}
+	
 	@Override
 	protected void begin()
 	{
@@ -61,7 +57,7 @@ public final class ShaderRenderSystem extends EntityProcessingSystem
 		Sprite sprite = renderableMapper.get(e).sprite;
 		sprite.draw(batch);
 	}
-
+	
 	@Override
 	protected void end()
 	{
