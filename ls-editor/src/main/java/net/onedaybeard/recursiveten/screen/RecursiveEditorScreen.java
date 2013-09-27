@@ -1,25 +1,22 @@
 package net.onedaybeard.recursiveten.screen;
 
 import net.onedaybeard.dominatrix.artemis.EntityFactoryManager;
+import net.onedaybeard.dominatrix.artemis.JsonComponentFactory;
+import net.onedaybeard.dominatrix.artemis.JsonComponentFactory.FactoryInstance;
 import net.onedaybeard.dominatrix.artemis.JsonEntitySerializer;
 import net.onedaybeard.keyflection.CommandManager;
 import net.onedaybeard.recursiveten.Assets;
 import net.onedaybeard.recursiveten.Director;
-import net.onedaybeard.recursiveten.component.Cullable;
-import net.onedaybeard.recursiveten.component.DeterministicLSystem;
 import net.onedaybeard.recursiveten.component.JsonKey;
-import net.onedaybeard.recursiveten.component.Position;
-import net.onedaybeard.recursiveten.component.Size;
-import net.onedaybeard.recursiveten.component.TurtleProcessor;
-import net.onedaybeard.recursiveten.component.Velocity;
+import net.onedaybeard.recursiveten.component.Shader;
 import net.onedaybeard.recursiveten.input.EntityController;
 import net.onedaybeard.recursiveten.input.EntityHandler;
-import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.manager.AnchorPointManager;
 import net.onedaybeard.recursiveten.manager.EntityTracker;
 import net.onedaybeard.recursiveten.manager.LSystemResolverManager;
 import net.onedaybeard.recursiveten.manager.LSystemSpriteGenerator;
 import net.onedaybeard.recursiveten.manager.LSystemUpdateCompletionManager;
+import net.onedaybeard.recursiveten.manager.ShaderLoader;
 import net.onedaybeard.recursiveten.system.debug.AnchorPointRenderer;
 import net.onedaybeard.recursiveten.system.debug.CameraInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.EntityOutlineRenderer;
@@ -27,17 +24,14 @@ import net.onedaybeard.recursiveten.system.debug.InputHoverSystem;
 import net.onedaybeard.recursiveten.system.debug.MouseInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.UiDebugSystem;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
-import net.onedaybeard.recursiveten.system.input.CameraController;
 import net.onedaybeard.recursiveten.system.input.InputHandlerSystem;
 import net.onedaybeard.recursiveten.system.render.BackgroundRenderSystem;
+import net.onedaybeard.recursiveten.system.render.ShaderRenderSystem;
 import net.onedaybeard.recursiveten.system.render.SpriteRenderSystem;
-import net.onedaybeard.recursiveten.system.spatial.PositionUpdateSystem;
 import net.onedaybeard.recursiveten.system.spatial.SpritePositionUpdateSystem;
 
 import com.artemis.Entity;
 import com.artemis.World;
-import com.artemis.managers.GroupManager;
-import com.artemis.managers.TagManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -46,7 +40,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
+import com.bitfire.postprocessing.effects.Bloom;
+import com.bitfire.postprocessing.effects.Bloom.Settings;
 
 public class RecursiveEditorScreen implements Screen
 {
@@ -91,12 +88,32 @@ public class RecursiveEditorScreen implements Screen
 	
 	private void initializeEntities(World world)
 	{
+		entityFactory.create("SHADER_BLOOM");
 		entityFactory.create("BACKGROUND");
-//		entityFactory.create("LS_DRAGON");
-		entityFactory.create("LS_KOCH_STAR");
+		entityFactory.create("LS_DRAGON");
+//		entityFactory.create("LS_KOCH_STAR");
 //		entityFactory.create("LS_BUSH");
 //		entityFactory.create("LS_TREE");
 //		Entity e = entityFactory.create("LS_TREE");
+		
+//		Entity e = world.createEntity();
+//		
+//		Settings settings = new Bloom.Settings();
+//		settings.bloomIntensity = 2;
+//		Shader shader = new Shader();
+//		shader.settings = settings;
+//		shader.settingsClass = settings.getClass().getCanonicalName();
+//		shader.settings = new 
+//		e.addComponent(shader);
+//		
+//		JsonEntitySerializer serializer = new JsonEntitySerializer(OutputType.json);
+//		CharSequence json = serializer.toJson(e, "SHADER_BLOOM");
+//		System.out.println(json);
+//		
+//		Json j = new Json(OutputType.json);
+		
+//		FactoryInstance factory = JsonComponentFactory.from(json.toString(), JsonKey.class.getPackage().getName());
+//		System.out.println(factory.getComponents("SHADER_BLOOM"));
 	}
 
 	private static void initInputProcessing(Stage ui, OrthographicCamera camera, World world)
@@ -121,6 +138,7 @@ public class RecursiveEditorScreen implements Screen
 		World world = new World();
 		SpriteBatch spriteBatch = Director.instance.getSpriteBatch();
 
+		world.setManager(new ShaderLoader());
 		world.setManager(new LSystemResolverManager());
 		world.setManager(new AnchorPointManager());
 		world.setManager(new LSystemSpriteGenerator());
@@ -134,6 +152,7 @@ public class RecursiveEditorScreen implements Screen
 		world.setSystem(new InputHandlerSystem(camera));
 		world.setSystem(new SpritePositionUpdateSystem());
 		world.setSystem(new BackgroundRenderSystem());
+		world.setSystem(new ShaderRenderSystem(spriteBatch, camera));
 		world.setSystem(new SpriteRenderSystem(spriteBatch, camera));
 		world.setSystem(new EntityOutlineRenderer(camera));
 		world.setSystem(new AnchorPointRenderer(camera));

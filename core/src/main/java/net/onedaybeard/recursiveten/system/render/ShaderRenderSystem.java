@@ -20,21 +20,34 @@ import com.bitfire.utils.ShaderLoader;
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
 	requires={Renderable.class, Cullable.class})
-public final class SpriteRenderSystem extends EntityProcessingSystem
+public final class ShaderRenderSystem extends EntityProcessingSystem
 {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	
-	public SpriteRenderSystem(SpriteBatch batch, OrthographicCamera camera)
+	private PostProcessor postProcessor;
+	private Bloom bloom;
+
+	public ShaderRenderSystem(SpriteBatch batch, OrthographicCamera camera)
 	{
 		super(null);
 		this.batch = batch;
 		this.camera = camera;
+		
+		ShaderLoader.BasePath = "shaders/";
+		postProcessor = new PostProcessor(false, false, (Gdx.app.getType() == ApplicationType.Desktop));
+		bloom = new Bloom((int)(Gdx.graphics.getWidth() * 0.25f), (int)(Gdx.graphics.getHeight() * 0.25f));
+//		bloom.setBaseIntesity(bloom.getBaseIntensity() * 2);
+//		bloom.setBloomIntensity(bloom.getBaseIntensity() * 2);
+		bloom.setBlurAmount(bloom.getBlurAmount() * 2);
+		postProcessor.addEffect(bloom);
 	}
 
 	@Override
 	protected void begin()
 	{
+		postProcessor.capture();
+		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 	}
@@ -53,5 +66,6 @@ public final class SpriteRenderSystem extends EntityProcessingSystem
 	protected void end()
 	{
 		batch.end();
+		postProcessor.render();
 	}
 }

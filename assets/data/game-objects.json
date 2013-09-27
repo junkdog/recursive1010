@@ -6,6 +6,14 @@
 			}
 		}
 	},
+	SHADER_BLOOM:{
+		"components": {
+			"Shader": {
+				"class": "net.onedaybeard.recursiveten.component.Shader",
+				"settings": { "class": "com.bitfire.postprocessing.effects.Bloom$Settings", "bloomIntensity": 2 }
+			}
+		}
+	},
 	LS_TREE:{
 		"components": {
 			"AnchorPoint": {},

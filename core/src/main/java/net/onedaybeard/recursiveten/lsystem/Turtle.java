@@ -27,7 +27,7 @@ public class Turtle extends BaseTurtle
 		Vector2 length = vector2(amount, 0).rotate(td.angle);
 		Vector2 newPosition = vector2(td.position).add(length);
 
-		if (draw) renderer.line(td.position, newPosition);
+		if (draw) renderer.line(td.position.x, td.position.y, newPosition.x, newPosition.y);
 		
 		td.position.set(newPosition);
 		
