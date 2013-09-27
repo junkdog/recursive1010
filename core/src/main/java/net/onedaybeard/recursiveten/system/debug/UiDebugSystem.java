@@ -30,10 +30,12 @@ import net.onedaybeard.recursiveten.component.Position;
 import net.onedaybeard.recursiveten.event.CommandEvent;
 import net.onedaybeard.recursiveten.event.CommandEvent.Type;
 import net.onedaybeard.recursiveten.event.CommandEventListener;
+import net.onedaybeard.recursiveten.manager.ShaderEffectsManager;
 import net.onedaybeard.recursiveten.profile.Profiler;
 import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.ui.CommandHelpOverlay;
 import net.onedaybeard.recursiveten.ui.lsystem.LSystemEditorHud;
+import net.onedaybeard.recursiveten.ui.shader.ShaderEditorHud;
 import net.onedaybeard.recursiveten.util.UnitCoordinates;
 
 import com.artemis.Component;
@@ -45,11 +47,12 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
-	managers=EntityFactoryManager.class,
+	managers={EntityFactoryManager.class, ShaderEffectsManager.class},
 	systems=EventSystem.class)
 public final class UiDebugSystem extends VoidEntitySystem
 {
@@ -61,6 +64,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 	private NotificationHud notificationHud;
 	private ComponentsHud componentsHud;
 	private LSystemEditorHud lsystemHud;
+	private ShaderEditorHud shaderHud;
 	private SystemsHud systemsHud;
 
 	@Getter private InputMultiplexer multiplexer;
@@ -108,6 +112,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 			}
 		});
 		lsystemHud = new LSystemEditorHud(skin, stage, world);
+		shaderHud = new ShaderEditorHud(skin, stage, world);
 		
 		inspectorHud.setVisible(true);
 		initInput();
@@ -127,10 +132,8 @@ public final class UiDebugSystem extends VoidEntitySystem
 				switch (type)
 				{
 					case ENTITY_SELECTED:
-						if (event.getIntValue() != -1)
-							setEntity(world.getEntity(event.getIntValue()));
-						else
-							setEntity(null);
+						setEntity((event.getIntValue() != -1)
+							? world.getEntity(event.getIntValue()) : null);
 						break;
 					case ENTITY_HOVERED:
 						if (event.getIntValue() != -1)
@@ -138,6 +141,23 @@ public final class UiDebugSystem extends VoidEntitySystem
 						break;
 					case NO_HOVERED_ENTITY:
 						inspectorHud.setEntity(null);
+						break;
+					case ENTITY_CHANGED_IN_WORLD:
+						setEntity(null);
+						setEntity(world.getEntity(event.getIntValue()));
+						break;
+					case SHOW_LSYSTEM:
+						lsystemHud.setVisible(true);
+						shaderHud.setVisible(false);
+						break;
+					case SHOW_SHADER_LIST:
+						lsystemHud.setVisible(false);
+						shaderHud.setVisible(true);
+						break;
+					case SHOW_SHADER_SETTINGS:
+						shaderHud.setEntity(world.getEntity(event.getIntValue()));
+						lsystemHud.setVisible(false);
+						shaderHud.setVisible(true);
 						break;
 						
 					default:
@@ -162,7 +182,7 @@ public final class UiDebugSystem extends VoidEntitySystem
 		stage.act();
 		stage.draw();
 		
-//		lsystemHud.drawDebug();
+//		lsystemHud.enableDebug();
 //		Table.drawDebug(stage);
 	}
 
@@ -223,10 +243,16 @@ public final class UiDebugSystem extends VoidEntitySystem
 			systemsHud.toggle();
 		}
 		
+		@Command(name="shaders", bindings=@Shortcut(Keys.F8))
+		public void toggleShaderList()
+		{
+			Director.instance.send(Type.SHOW_SHADER_SETTINGS, shaderEffectsManager.getActive().get(0).getId());
+		}
+		
 		@Command(name="lsystem", bindings=@Shortcut(Keys.F9))
 		public void toggleLSystemEditor()
 		{
-			lsystemHud.toggle();
+			Director.instance.send(Type.SHOW_LSYSTEM);
 		}
 		
 		@Command(name="recalculate lsystems", bindings=@Shortcut(Keys.F10))

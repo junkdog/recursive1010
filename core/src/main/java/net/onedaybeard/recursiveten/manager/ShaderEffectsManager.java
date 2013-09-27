@@ -11,6 +11,7 @@ import com.artemis.Entity;
 import com.artemis.Manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Application.ApplicationType;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IdentityMap;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.PostProcessorEffect;
@@ -24,13 +25,17 @@ import com.bitfire.postprocessing.effects.Zoomer;
 
 @ArtemisManager(
 	requires=Shader.class)
-public class ShaderLoader extends Manager
+public class ShaderEffectsManager extends Manager
 {
 	private final IdentityMap<Class<? extends EffectSettings>, Class<? extends PostProcessorEffect<?>>> effectsMap;
-	@Getter private final PostProcessor postProcessor; 
+	@Getter private final PostProcessor postProcessor;
 	
-	public ShaderLoader()
+	@Getter private Array<Entity> active;
+	
+	public ShaderEffectsManager()
 	{
+		active = new Array<Entity>();
+		
 		effectsMap = new IdentityMap<Class<? extends EffectSettings>,Class<? extends PostProcessorEffect<?>>>();
 		effectsMap.put(Bloom.Settings.class, Bloom.class);
 		effectsMap.put(CameraMotion.Settings.class, CameraMotion.class);
@@ -49,6 +54,7 @@ public class ShaderLoader extends Manager
 	@Override @SuppressWarnings("rawtypes")
 	public void added(Entity e)
 	{
+		active.add(e);
 		Shader shader = shaderMapper.get(e);
 		Class<? extends PostProcessorEffect> klazz = effectsMap.get(shader.settings.getClass());
 		try
@@ -86,6 +92,8 @@ public class ShaderLoader extends Manager
 	@Override
 	public void deleted(Entity e)
 	{
+		active.removeValue(e, true);
+		
 		Shader shader = shaderMapper.get(e);
 		postProcessor.removeEffect(shader.effect);
 		shader.effect.dispose();

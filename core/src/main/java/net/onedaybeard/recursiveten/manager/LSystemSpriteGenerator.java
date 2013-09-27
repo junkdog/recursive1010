@@ -10,8 +10,9 @@ import net.onedaybeard.recursiveten.component.Renderable;
 import net.onedaybeard.recursiveten.component.Size;
 import net.onedaybeard.recursiveten.component.TurtleProcessor;
 import net.onedaybeard.recursiveten.component.TurtleProcessor.CommandBinding;
-import net.onedaybeard.recursiveten.lsystem.LSystem;
-import net.onedaybeard.recursiveten.lsystem.LSystemUtil;
+import net.onedaybeard.recursiveten.event.CommandEvent;
+import net.onedaybeard.recursiveten.event.CommandEvent.Type;
+import net.onedaybeard.recursiveten.event.CommandEventListener;
 import net.onedaybeard.recursiveten.lsystem.PixmapTurtle;
 import net.onedaybeard.recursiveten.lsystem.TurtleCommand;
 import net.onedaybeard.recursiveten.lsystem.TurtleInterpreter;
@@ -30,7 +31,26 @@ public class LSystemSpriteGenerator extends Manager
 	private Set<Entity> entities = new HashSet<Entity>();
 
 	@Override
-	protected void initialize() {}
+	protected void initialize()
+	{
+		eventSystem.addReceiver(new CommandEventListener()
+		{
+			@Override
+			protected boolean onReceive(CommandEvent event, Type type)
+			{
+				for (Entity e : entities)
+					deterministicLSystemMapper.get(e).requestUpdate = true;
+				
+				return false;
+			}
+			
+			@Override
+			protected boolean isAccepting(CommandEvent event, Type type)
+			{
+				return type == Type.ENTITY_LSYSTEM_REQUEST_UPDATE;
+			}
+		});
+	}
 
 	@Override
 	public void added(Entity e)

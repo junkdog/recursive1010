@@ -16,7 +16,7 @@ import net.onedaybeard.recursiveten.manager.EntityTracker;
 import net.onedaybeard.recursiveten.manager.LSystemResolverManager;
 import net.onedaybeard.recursiveten.manager.LSystemSpriteGenerator;
 import net.onedaybeard.recursiveten.manager.LSystemUpdateCompletionManager;
-import net.onedaybeard.recursiveten.manager.ShaderLoader;
+import net.onedaybeard.recursiveten.manager.ShaderEffectsManager;
 import net.onedaybeard.recursiveten.system.debug.AnchorPointRenderer;
 import net.onedaybeard.recursiveten.system.debug.CameraInfoSystem;
 import net.onedaybeard.recursiveten.system.debug.EntityOutlineRenderer;
@@ -27,6 +27,7 @@ import net.onedaybeard.recursiveten.system.event.EventSystem;
 import net.onedaybeard.recursiveten.system.input.InputHandlerSystem;
 import net.onedaybeard.recursiveten.system.render.BackgroundRenderSystem;
 import net.onedaybeard.recursiveten.system.render.ShaderRenderSystem;
+import net.onedaybeard.recursiveten.system.render.ShaderUpdaterSystem;
 import net.onedaybeard.recursiveten.system.render.SpriteRenderSystem;
 import net.onedaybeard.recursiveten.system.spatial.SpritePositionUpdateSystem;
 
@@ -60,7 +61,7 @@ public class RecursiveEditorScreen implements Screen
 	private static EntityFactoryManager entityFactory;
 
 	// private TemporalMultiplier timeMultiplier;
-
+	
 	public RecursiveEditorScreen()
 	{
 		ui = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, Director.instance.getSpriteBatch());
@@ -138,7 +139,7 @@ public class RecursiveEditorScreen implements Screen
 		World world = new World();
 		SpriteBatch spriteBatch = Director.instance.getSpriteBatch();
 
-		world.setManager(new ShaderLoader());
+		world.setManager(new ShaderEffectsManager());
 		world.setManager(new LSystemResolverManager());
 		world.setManager(new AnchorPointManager());
 		world.setManager(new LSystemSpriteGenerator());
@@ -152,6 +153,7 @@ public class RecursiveEditorScreen implements Screen
 		world.setSystem(new InputHandlerSystem(camera));
 		world.setSystem(new SpritePositionUpdateSystem());
 		world.setSystem(new BackgroundRenderSystem());
+		world.setSystem(new ShaderUpdaterSystem());
 		world.setSystem(new ShaderRenderSystem(spriteBatch, camera));
 		world.setSystem(new SpriteRenderSystem(spriteBatch, camera));
 		world.setSystem(new EntityOutlineRenderer(camera));

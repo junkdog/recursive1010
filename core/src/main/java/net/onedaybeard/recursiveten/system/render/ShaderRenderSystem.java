@@ -5,7 +5,7 @@ import lombok.Profile;
 import net.onedaybeard.recursiveten.component.Cullable;
 import net.onedaybeard.recursiveten.component.Renderable;
 import net.onedaybeard.recursiveten.component.ShaderPainted;
-import net.onedaybeard.recursiveten.manager.ShaderLoader;
+import net.onedaybeard.recursiveten.manager.ShaderEffectsManager;
 import net.onedaybeard.recursiveten.profile.Profiler;
 
 import com.artemis.Entity;
@@ -18,7 +18,7 @@ import com.bitfire.postprocessing.PostProcessor;
 @Profile(using=Profiler.class, enabled=Profiler.ENABLED)
 @ArtemisSystem(
 	requires={Renderable.class, Cullable.class, ShaderPainted.class},
-	managers=ShaderLoader.class)
+	managers=ShaderEffectsManager.class)
 public final class ShaderRenderSystem extends EntityProcessingSystem
 {
 	private final SpriteBatch batch;
@@ -36,7 +36,7 @@ public final class ShaderRenderSystem extends EntityProcessingSystem
 	@Override
 	protected void initialize()
 	{
-		postProcessor = shaderLoader.getPostProcessor();
+		postProcessor = shaderEffectsManager.getPostProcessor();
 	}
 	
 	@Override
